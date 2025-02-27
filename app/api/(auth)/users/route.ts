@@ -5,6 +5,8 @@ import { NextResponse } from "next/server";
 
 const ObjectId = require("mongoose").Types.ObjectId;
 
+// Get all users
+
 export const GET = async () => {
     try {
         await connect();
@@ -16,6 +18,8 @@ export const GET = async () => {
         });
     }
 };
+
+// Create new user
 
 export const POST = async (request: Request) => {
     try {
@@ -32,6 +36,8 @@ export const POST = async (request: Request) => {
         });
     }
 };
+
+// Update user
 
 export const PATCH = async (request: Request) => {
     try {
@@ -77,4 +83,18 @@ export const PATCH = async (request: Request) => {
             status: 500 
         });
     }
+};
+
+// Delete user
+
+export const DELETE = async (request: Request) => {
+    try {
+        const { searchParams } = new URL(request.url);
+        const userId = searchParams.get("userId");
+
+    } catch (error: any) {
+
+    }
+        
+
 };
