@@ -5,7 +5,6 @@ const UserSchema = new Schema(
         email: {type: "string", required: true, unique: true},
         username: {type: "string", required: true, unique: true},
         password: {type: "string", required: true},
-        createdAt: {type: Date, default: Date.now},
     },
     {
         timestamps: true,
