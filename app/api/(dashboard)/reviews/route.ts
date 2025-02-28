@@ -4,43 +4,43 @@ import Review from "@/lib/models/reviews";
 import { Types } from "mongoose";
 import { NextResponse } from "next/server";
 
-
+// GET Reviews (All or By User)
 export const GET = async (request: Request) => {
     try {
+        await connect();
         const { searchParams } = new URL(request.url);
         const userId = searchParams.get("userId");
 
-        if (!userId || !Types.ObjectId.isValid(userId)) {
-            return new NextResponse(
-                JSON.stringify({ message: "Invalid or missing user id" }),
-                { status: 400 }
-            );
+        if (userId) {
+            if (!Types.ObjectId.isValid(userId)) {
+                return new NextResponse(
+                    JSON.stringify({ message: "Invalid or missing user id" }),
+                    { status: 400 }
+                );
+            }
+
+            const user = await User.findById(userId);
+            if (!user) {
+                return new NextResponse(
+                    JSON.stringify({ message: "User not found in database" }),
+                    { status: 404 }
+                );
+            }
+
+            const reviews = await Review.find({ user: new Types.ObjectId(userId) });
+            return new NextResponse(JSON.stringify(reviews), { status: 200 });
         }
 
-        await connect();
-
-        const user = await User.findById(userId);
-
-        if (!user) {
-            return new NextResponse(
-                JSON.stringify({ message: "User not found in database" }),
-                { status: 404 }
-            );
-        }
-
-        const reviews = await Review.find({
-            user: new Types.ObjectId(userId),
-        });
-
+        // Om ingen userId anges, hämta alla recensioner
+        const reviews = await Review.find();
         return new NextResponse(JSON.stringify(reviews), { status: 200 });
 
     } catch (error: any) {
-        return new NextResponse("Error in fetching reviews" + error.message, {
+        return new NextResponse("Error in fetching reviews: " + error.message, {
             status: 500,
         });
     }
-
-}
+};
 
 export const POST = async (request: Request) => {
     try {

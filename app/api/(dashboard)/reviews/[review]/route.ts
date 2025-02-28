@@ -3,9 +3,10 @@ import User from "@/lib/models/users";
 import Review from "@/lib/models/reviews";
 import { Types } from "mongoose";
 import { NextResponse } from "next/server";
+import { SearchParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
 
 
-export const PATCH = async (request: Request, context: {params: any}) => {
+export const PATCH = async (request: Request, context: { params: any }) => {
     const reviewId = context.params.review;
     try {
         const body = await request.json();
@@ -38,7 +39,7 @@ export const PATCH = async (request: Request, context: {params: any}) => {
             );
         }
 
-        const review = await Review.findOne({_id: reviewId, user: userId})
+        const review = await Review.findOne({ _id: reviewId, user: userId })
 
         if (!review) {
             return new NextResponse(
@@ -50,12 +51,12 @@ export const PATCH = async (request: Request, context: {params: any}) => {
         const updatedReview = await Review.findByIdAndUpdate(reviewId, { comment, rating }, { new: true });
 
         return new NextResponse(JSON.stringify({ message: "Review updated successfully", review: updatedReview }), { status: 200 });
-        
+
     } catch (error: any) {
         return new NextResponse("Error in updating user" + error.message, {
             status: 500,
         });
-        
+
     }
 }
 
@@ -88,8 +89,8 @@ export const DELETE = async (request: Request, context: { params: any }) => {
                 { status: 404 }
             );
         }
-        
-        const review = await Review.findOne({_id: reviewId, user: userId})
+
+        const review = await Review.findOne({ _id: reviewId, user: userId })
         if (!review) {
             return new NextResponse(
                 JSON.stringify({ message: "Review not found or does not belong to the user" }),
@@ -105,6 +106,6 @@ export const DELETE = async (request: Request, context: { params: any }) => {
         return new NextResponse("Error in deleting review" + error.message, {
             status: 500,
         });
-        
+
     }
 }
