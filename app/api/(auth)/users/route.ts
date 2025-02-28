@@ -1,5 +1,6 @@
 import connect from "@/lib/db";
 import User from "@/lib/models/users";
+import bcrypt from "bcryptjs";
 import { Types } from "mongoose";
 import { NextResponse } from "next/server";
 
@@ -20,22 +21,28 @@ export const GET = async () => {
 };
 
 // Create new user
-
 export const POST = async (request: Request) => {
     try {
-        const body = await request.json();
-        await connect();
-        const newUser = new User(body);
-        await newUser.save();
+        const { username, email, password } = await request.json(); 
 
-        return new NextResponse(JSON.stringify({ message: "User is created", user: newUser }), { status: 201 });
+        if (!username || !email || !password) { //Kontrollera att email finns
+            return new NextResponse("Username, email, and password are required", { status: 400 });
+        }
+
+        await connect();
+
+        // Hasha lösenord
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({ username, email, password: hashedPassword }); 
+
+        await newUser.save();
+        return new NextResponse(JSON.stringify({ message: "User created" }), { status: 201 });
 
     } catch (error: any) {
-        return new NextResponse("Error in creating user" + error.message, {
-            status: 500,
-        });
+        return new NextResponse("Error in creating user: " + error.message, { status: 500 });
     }
 };
+
 
 // Update user
 
