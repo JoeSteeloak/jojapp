@@ -10,7 +10,7 @@ export const GET = async (request: Request) => {
         const { searchParams } = new URL(request.url);
         const userId = searchParams.get("userId");
 
-        if (!userId || Types.ObjectId.isValid(userId)) {
+        if (!userId || !Types.ObjectId.isValid(userId)) {
             return new NextResponse(
                 JSON.stringify({ message: "Invalid or missing user id" }),
                 { status: 400 }
