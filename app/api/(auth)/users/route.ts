@@ -1,24 +1,34 @@
 import connect from "@/lib/db";
+import { verifyToken } from "@/lib/middleware/authMiddleware";
 import User from "@/lib/models/users";
 import bcrypt from "bcryptjs";
 import { Types } from "mongoose";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const ObjectId = require("mongoose").Types.ObjectId;
 
-// Get all users
-
-export const GET = async () => {
+// Get user (Protected)
+export const GET = async (request: NextRequest) => {
     try {
         await connect();
-        const users = await User.find();
-        return new NextResponse(JSON.stringify(users), { status: 200 });
-    } catch (err: any) {
-        return new NextResponse("Error in fetching users" + err.message, {
-            status: 500,
-        });
+
+        const decoded = verifyToken(request);
+        if (!decoded) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+
+        const user = await User.findById(decoded.userId).select("-password"); // Exkludera lösenordet från svaret
+        if (!user) {
+            return new NextResponse(JSON.stringify({ message: "User not found" }), { status: 404 });
+        }
+
+        return new NextResponse(JSON.stringify(user), { status: 200 });
+
+    } catch (error: any) {
+        return new NextResponse("Error fetching user data: " + error.message, { status: 500 });
     }
 };
+
 
 // Create new user
 export const POST = async (request: Request) => {
@@ -44,10 +54,14 @@ export const POST = async (request: Request) => {
 };
 
 
-// Update user
-
-export const PATCH = async (request: Request) => {
+// Update user (Protected)
+export const PATCH = async (request: NextRequest) => {
     try {
+        const decoded = verifyToken(request);
+        if (!decoded) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+
         const body = await request.json();
         const { userId, newUsername } = body;
 
@@ -79,23 +93,26 @@ export const PATCH = async (request: Request) => {
             );
         }
 
-
         return new NextResponse(
             JSON.stringify({ message: "User is updated", user: updatedUser }),
             { status: 200 }
         );
 
     } catch (error: any) {
-        return new NextResponse("Error in updating user" + error.message, {
+        return new NextResponse("Error in updating user: " + error.message, {
             status: 500
         });
     }
 };
 
-// Delete user
-
-export const DELETE = async (request: Request) => {
+// Delete user (Protected)
+export const DELETE = async (request: NextRequest) => {
     try {
+        const decoded = verifyToken(request);
+        if (!decoded) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+
         const { searchParams } = new URL(request.url);
         const userId = searchParams.get("userId");
 
@@ -131,11 +148,8 @@ export const DELETE = async (request: Request) => {
             { status: 200 }
         );
     } catch (error: any) {
-        return new NextResponse("Error in deleting user" + error.message, {
+        return new NextResponse("Error in deleting user: " + error.message, {
             status: 500
         });
-
     }
-
-
 };

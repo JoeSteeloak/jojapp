@@ -2,10 +2,12 @@ import connect from "@/lib/db";
 import User from "@/lib/models/users";
 import Review from "@/lib/models/reviews";
 import { Types } from "mongoose";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
+import { verifyToken } from "@/lib/auth";
+import { JwtPayload } from "jsonwebtoken";
 
 // GET Reviews (All or By User)
-export const GET = async (request: Request) => {
+export const GET = async (request: NextRequest) => {
     try {
         await connect();
         const { searchParams } = new URL(request.url);
@@ -42,38 +44,111 @@ export const GET = async (request: Request) => {
     }
 };
 
-export const POST = async (request: Request) => {
+// POST - Create new review
+export const POST = async (request: NextRequest) => {
     try {
-        const { searchParams } = new URL(request.url);
-        const userId = searchParams.get("userId");
-
         const { comment, rating } = await request.json();
 
-        if (!userId || !Types.ObjectId.isValid(userId) || !comment || !rating || rating < 1 || rating > 5) {
-            return new NextResponse(
-                JSON.stringify({ message: "Invalid or missing user id, comment, or rating" }),
-                { status: 400 }
-            );
+        const authHeader = request.headers.get("Authorization");
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+        const token = authHeader.split(" ")[1];
+        const decoded = verifyToken(token) as JwtPayload | null;
+        if (!decoded || !decoded.userId) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
         }
 
         await connect();
 
-        const user = await User.findById(userId);
-        if (!user) {
-            return new NextResponse(
-                JSON.stringify({ message: "User not found in database" }),
-                { status: 404 }
-            );
-        }
-
-        const newReview = new Review({ comment, rating, user: new Types.ObjectId(userId) });
-
+        const newReview = new Review({ comment, rating, user: new Types.ObjectId(decoded.userId) });
         await newReview.save();
         return new NextResponse(JSON.stringify({ message: "Review is created", review: newReview }), { status: 201 });
 
     } catch (error: any) {
-        return new NextResponse("Error in creating reviews" + error.message, {
-            status: 500,
-        });
+        return new NextResponse("Error in creating review: " + error.message, { status: 500 });
     }
-}
+};
+
+// PATCH - Update a review (Protected)
+export const PATCH = async (request: NextRequest) => {
+    try {
+        await connect();
+
+        const authHeader = request.headers.get("Authorization");
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+        const token = authHeader.split(" ")[1];
+        const decoded = verifyToken(token) as JwtPayload | null;
+        if (!decoded || !decoded.userId) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+
+        const { reviewId, comment, rating } = await request.json();
+
+        if (!reviewId || !Types.ObjectId.isValid(reviewId) || !comment || !rating || rating < 1 || rating > 5) {
+            return new NextResponse(
+                JSON.stringify({ message: "Invalid or missing review id, comment, or rating" }),
+                { status: 400 }
+            );
+        }
+
+        const review = await Review.findById(reviewId);
+        if (!review) {
+            return new NextResponse(JSON.stringify({ message: "Review not found" }), { status: 404 });
+        }
+
+        if (review.user.toString() !== decoded.userId) {
+            return new NextResponse(JSON.stringify({ message: "You are not authorized to edit this review" }), { status: 403 });
+        }
+
+        review.comment = comment;
+        review.rating = rating;
+        await review.save();
+
+        return new NextResponse(JSON.stringify({ message: "Review updated", review }), { status: 200 });
+
+    } catch (error: any) {
+        return new NextResponse("Error in updating review: " + error.message, { status: 500 });
+    }
+};
+
+// DELETE - Remove a review (Protected)
+export const DELETE = async (request: NextRequest) => {
+    try {
+        await connect();
+        const authHeader = request.headers.get("Authorization");
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+        const token = authHeader.split(" ")[1];
+        const decoded = verifyToken(token) as JwtPayload | null;
+        if (!decoded || !decoded.userId) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+
+        const { searchParams } = new URL(request.url);
+        const reviewId = searchParams.get("reviewId");
+
+        if (!reviewId || !Types.ObjectId.isValid(reviewId)) {
+            return new NextResponse(JSON.stringify({ message: "Invalid or missing review id" }), { status: 400 });
+        }
+
+        const review = await Review.findById(reviewId);
+        if (!review) {
+            return new NextResponse(JSON.stringify({ message: "Review not found" }), { status: 404 });
+        }
+
+        if (review.user.toString() !== decoded.userId) {
+            return new NextResponse(JSON.stringify({ message: "You are not authorized to delete this review" }), { status: 403 });
+        }
+
+        await review.deleteOne();
+
+        return new NextResponse(JSON.stringify({ message: "Review deleted" }), { status: 200 });
+
+    } catch (error: any) {
+        return new NextResponse("Error in deleting review: " + error.message, { status: 500 });
+    }
+};
