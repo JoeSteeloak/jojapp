@@ -3,12 +3,23 @@ import User from "@/lib/models/users";
 import Review from "@/lib/models/reviews";
 import { Types } from "mongoose";
 import { NextResponse } from "next/server";
-import { SearchParamsContext } from "next/dist/shared/lib/hooks-client-context.shared-runtime";
+import { verifyToken } from "@/lib/auth";
+import { JwtPayload } from "jsonwebtoken";
 
-
+// PATCH - Uppdatera en recension (skyddad)
 export const PATCH = async (request: Request, context: { params: any }) => {
     const reviewId = context.params.review;
     try {
+        const authHeader = request.headers.get("Authorization");
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+        const token = authHeader.split(" ")[1];
+        const decoded = verifyToken(token) as JwtPayload | null;
+        if (!decoded || !decoded.userId) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+
         const body = await request.json();
         const { comment, rating } = body;
 
@@ -39,8 +50,7 @@ export const PATCH = async (request: Request, context: { params: any }) => {
             );
         }
 
-        const review = await Review.findOne({ _id: reviewId, user: userId })
-
+        const review = await Review.findOne({ _id: reviewId, user: userId });
         if (!review) {
             return new NextResponse(
                 JSON.stringify({ message: "Review not found" }),
@@ -53,16 +63,24 @@ export const PATCH = async (request: Request, context: { params: any }) => {
         return new NextResponse(JSON.stringify({ message: "Review updated successfully", review: updatedReview }), { status: 200 });
 
     } catch (error: any) {
-        return new NextResponse("Error in updating user" + error.message, {
-            status: 500,
-        });
-
+        return new NextResponse("Error in updating review: " + error.message, { status: 500 });
     }
-}
+};
 
+// DELETE - Ta bort en recension (skyddad)
 export const DELETE = async (request: Request, context: { params: any }) => {
     const reviewId = context.params.review;
     try {
+        const authHeader = request.headers.get("Authorization");
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+        const token = authHeader.split(" ")[1];
+        const decoded = verifyToken(token) as JwtPayload | null;
+        if (!decoded || !decoded.userId) {
+            return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
+        }
+
         const { searchParams } = new URL(request.url);
         const userId = searchParams.get("userId");
 
@@ -90,7 +108,7 @@ export const DELETE = async (request: Request, context: { params: any }) => {
             );
         }
 
-        const review = await Review.findOne({ _id: reviewId, user: userId })
+        const review = await Review.findOne({ _id: reviewId, user: userId });
         if (!review) {
             return new NextResponse(
                 JSON.stringify({ message: "Review not found or does not belong to the user" }),
@@ -103,9 +121,7 @@ export const DELETE = async (request: Request, context: { params: any }) => {
         return new NextResponse(JSON.stringify({ message: "Review deleted successfully" }), { status: 200 });
 
     } catch (error: any) {
-        return new NextResponse("Error in deleting review" + error.message, {
-            status: 500,
-        });
-
+        return new NextResponse("Error in deleting review: " + error.message, { status: 500 });
     }
-}
+};
+
