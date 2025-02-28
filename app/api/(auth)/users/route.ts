@@ -94,7 +94,7 @@ export const DELETE = async (request: Request) => {
 
         if (!userId) {
             return new NextResponse(
-                JSON.stringify({ message: "ID or new username not found" }),
+                JSON.stringify({ message: "Id not found" }),
                 { status: 400 }
             );
         }
