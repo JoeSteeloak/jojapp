@@ -6,10 +6,10 @@ import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
     try {
-        const { username, password } = await request.json();
+        const { email, password } = await request.json();
 
         await connect();
-        const user = await User.findOne({ username });
+        const user = await User.findOne({ email });
 
         if (!user) {
             return new NextResponse(JSON.stringify({ message: "Invalid credentials" }), { status: 401 });
