@@ -1,3 +1,7 @@
-export default function Page() {
-    return <p>User Page</p>;
-}
+import React from "react";
+
+const User = () => {
+    return <div>User</div>;
+};
+
+export default User;
