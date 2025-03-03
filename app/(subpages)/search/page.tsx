@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import SearchBar  from "@/app/components/SearchBar";
+import SearchBar from "@/app/components/SearchBar";
 import { BookInterface } from "@/app/types/BookInterface";
+import Link from "next/link";
+
 
 const Search = () => {
     const [books, setBooks] = useState<BookInterface[]>([]);
@@ -21,6 +23,12 @@ const Search = () => {
                         <h3 className="text-lg font-bold">{book.title}</h3>
                         <p className="text-gray-600">{book.author}</p>
                         <p className="text-sm text-gray-500">{book.publishedDate}</p>
+
+                        <Link href={`/${book.id}`}>
+                            <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+                                View Details
+                            </button>
+                        </Link>
                     </div>
                 ))}
             </div>
