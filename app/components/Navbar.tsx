@@ -14,6 +14,9 @@ const Navbar = () => {
                 <li>
                     <Link href="/search" className={pathname === "/search" ? "font-bold" : ""}>Search</Link>
                 </li>
+                <li>
+                    <Link href="/login" className={pathname === "/login" ? "font-bold" : ""}>Login</Link>
+                </li>
             </ul>
         </nav>
     );
