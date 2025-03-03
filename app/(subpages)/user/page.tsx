@@ -30,7 +30,7 @@ const User = () => {
                 if (res.ok) {
                     const data: UserInterface = await res.json();
                     setUser(data);
-                    setUpdatedName(data.name);
+                    setUpdatedName(data.username);
                     setUpdatedEmail(data.email);
                 } else {
                     console.error("Failed to fetch user data");
