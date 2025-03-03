@@ -24,7 +24,7 @@ const Search = () => {
                         <p className="text-gray-600">{book.author}</p>
                         <p className="text-sm text-gray-500">{book.publishedDate}</p>
 
-                        <Link href={`/${book.id}`}>
+                        <Link href={"/book/" + book.id}>
                             <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
                                 View Details
                             </button>
