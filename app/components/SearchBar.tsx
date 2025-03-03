@@ -20,7 +20,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResults }) => {
 
         try {
             const response = await fetch(
-                `https://www.googleapis.com/books/v1/volumes?q=${query}`
+                `https://www.googleapis.com/books/v1/volumes?q=${query}&langRestrict=en`
             );
 
             if (!response.ok) throw new Error("Failed to fetch books");
