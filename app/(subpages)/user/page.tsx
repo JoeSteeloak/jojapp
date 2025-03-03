@@ -1,19 +1,26 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import { UserInterface } from "@/app/types/UserInterface";
 
 const User = () => {
+    const router = useRouter();
     const [user, setUser] = useState<UserInterface | null>(null);
     const [updatedName, setUpdatedName] = useState("");
     const [updatedEmail, setUpdatedEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
     const [message, setMessage] = useState("");
 
     useEffect(() => {
+        // Hämta användardata
         const fetchUser = async () => {
             const token = localStorage.getItem("token");
-            if (!token) return;
+            if (!token) {
+                router.push("/login");
+                return;
+            }
 
             try {
                 const res = await fetch("http://localhost:3000/api/users", {
@@ -34,11 +41,21 @@ const User = () => {
         };
 
         fetchUser();
-    }, []);
+    }, [router]);
 
-    const handleUpdate = async () => {
+    const handleUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!oldPassword) {
+            setMessage("You must enter your old password to update your info.");
+            return;
+        }
+
         const token = localStorage.getItem("token");
-        if (!token) return;
+        if (!token) {
+            router.push("/login");
+            return;
+        }
 
         try {
             const res = await fetch("http://localhost:3000/api/users", {
@@ -48,23 +65,24 @@ const User = () => {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    name: updatedName,
-                    email: updatedEmail,
-                    password: password || undefined, // Skicka endast om fältet är ifyllt
+                    userId: user?.id,
+                    newName: updatedName,
+                    newEmail: updatedEmail,
+                    oldPassword,
+                    newPassword: newPassword ? newPassword : undefined,
                 }),
             });
 
+            const data = await res.json();
             if (res.ok) {
-                const updatedUser: UserInterface = await res.json();
-                setUser(updatedUser);
-                setMessage("Profile updated successfully!");
-                setPassword(""); // Rensa lösenordet efter uppdatering
+                setMessage("User updated successfully!");
+                setUser(data.user);
             } else {
-                setMessage("Failed to update profile.");
+                setMessage(data.message || "Failed to update user.");
             }
         } catch (error) {
+            setMessage("Error updating user.");
             console.error("Error updating user:", error);
-            setMessage("An error occurred while updating.");
         }
     };
 
@@ -72,43 +90,53 @@ const User = () => {
         <ProtectedRoute>
             <div className="p-6">
                 <h1 className="text-2xl font-bold">User Profile</h1>
-                {message && <p className="text-green-600">{message}</p>}
-                {user ? (
-                    <div className="mt-4">
-                        <h2>Update user information</h2>
-                        <label className="block">Name:</label>
-                        <input
-                            type="text"
-                            value={updatedName}
-                            onChange={(e) => setUpdatedName(e.target.value)}
-                            className="border p-2 rounded w-full"
-                        />
-
-                        <label className="block mt-2">Email:</label>
-                        <input
-                            type="email"
-                            value={updatedEmail}
-                            onChange={(e) => setUpdatedEmail(e.target.value)}
-                            className="border p-2 rounded w-full"
-                        />
-
-                        <label className="block mt-2">New Password (optional):</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="border p-2 rounded w-full"
-                        />
-
+                {message && <p className="text-red-500">{message}</p>}
+                {user && (
+                    <form onSubmit={handleUpdate} className="space-y-4">
+                        <div>
+                            <label>Name</label>
+                            <input
+                                type="text"
+                                value={updatedName}
+                                onChange={(e) => setUpdatedName(e.target.value)}
+                                className="border p-2 w-full"
+                            />
+                        </div>
+                        <div>
+                            <label>Email</label>
+                            <input
+                                type="email"
+                                value={updatedEmail}
+                                onChange={(e) => setUpdatedEmail(e.target.value)}
+                                className="border p-2 w-full"
+                            />
+                        </div>
+                        <div>
+                            <label>Old Password (required for updates)</label>
+                            <input
+                                type="password"
+                                value={oldPassword}
+                                onChange={(e) => setOldPassword(e.target.value)}
+                                className="border p-2 w-full"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label>New Password (optional)</label>
+                            <input
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className="border p-2 w-full"
+                            />
+                        </div>
                         <button
-                            onClick={handleUpdate}
-                            className="mt-4 bg-blue-600 text-white p-2 rounded"
+                            type="submit"
+                            className="bg-blue-600 text-white p-2 rounded"
                         >
                             Update Profile
                         </button>
-                    </div>
-                ) : (
-                    <p>Loading user info...</p>
+                    </form>
                 )}
             </div>
         </ProtectedRoute>

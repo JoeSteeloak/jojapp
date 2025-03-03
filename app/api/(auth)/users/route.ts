@@ -57,18 +57,21 @@ export const POST = async (request: Request) => {
 // Update user (Protected)
 export const PATCH = async (request: NextRequest) => {
     try {
+        // Verifiera token och hämta användaren
         const decoded = verifyToken(request);
         if (!decoded) {
             return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
         }
 
-        const body = await request.json();
-        const { userId, newUsername } = body;
-
         await connect();
-        if (!userId || !newUsername) {
+
+        // Hämta data från request
+        const body = await request.json();
+        const { userId, newUsername, oldPassword, newPassword } = body;
+
+        if (!userId || !newUsername || !oldPassword) {
             return new NextResponse(
-                JSON.stringify({ message: "ID or new username not found" }),
+                JSON.stringify({ message: "Missing required fields" }),
                 { status: 400 }
             );
         }
@@ -80,21 +83,46 @@ export const PATCH = async (request: NextRequest) => {
             );
         }
 
+        // Hämta användaren från databasen
+        const user = await User.findById(userId);
+        if (!user) {
+            return new NextResponse(
+                JSON.stringify({ message: "User not found" }),
+                { status: 404 }
+            );
+        }
+
+        //  Kontrollera att `oldPassword` matchar det lagrade lösenordet
+        const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!passwordMatch) {
+            return new NextResponse(
+                JSON.stringify({ message: "Incorrect old password" }),
+                { status: 401 }
+            );
+        }
+
+        // Om `newPassword` anges, hash det innan uppdatering
+        let updatedPassword = user.password;
+        if (newPassword) {
+            updatedPassword = await bcrypt.hash(newPassword, 10);
+        }
+
+        // Uppdatera användaren i databasen
         const updatedUser = await User.findOneAndUpdate(
             { _id: new ObjectId(userId) },
-            { username: newUsername },
+            { username: newUsername, password: updatedPassword },
             { new: true }
         );
 
         if (!updatedUser) {
             return new NextResponse(
-                JSON.stringify({ message: "User is not found" }),
-                { status: 400 }
+                JSON.stringify({ message: "Failed to update user" }),
+                { status: 500 }
             );
         }
 
         return new NextResponse(
-            JSON.stringify({ message: "User is updated", user: updatedUser }),
+            JSON.stringify({ message: "User updated successfully", user: updatedUser }),
             { status: 200 }
         );
 
