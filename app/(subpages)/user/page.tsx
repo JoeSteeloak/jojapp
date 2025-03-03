@@ -7,6 +7,7 @@ import { UserInterface } from "@/app/types/UserInterface";
 const User = () => {
     const router = useRouter();
     const [user, setUser] = useState<UserInterface | null>(null);
+    const [userId, setUserId] = useState<string>(""); // Lagra userId separat
     const [updatedName, setUpdatedName] = useState("");
     const [updatedEmail, setUpdatedEmail] = useState("");
     const [oldPassword, setOldPassword] = useState("");
@@ -27,14 +28,16 @@ const User = () => {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                if (res.ok) {
-                    const data: UserInterface = await res.json();
-                    setUser(data);
-                    setUpdatedName(data.username);
-                    setUpdatedEmail(data.email);
-                } else {
+                if (!res.ok) {
                     console.error("Failed to fetch user data");
+                    return;
                 }
+
+                const data: UserInterface = await res.json();
+                setUser(data);
+                setUserId(data._id); // Spara userId från backend
+                setUpdatedName(data.username);
+                setUpdatedEmail(data.email);
             } catch (error) {
                 console.error("Error fetching user:", error);
             }
@@ -65,11 +68,11 @@ const User = () => {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    userId: user?.id,
-                    newName: updatedName,
+                    userId, // Skicka med användarens ID
+                    newUsername: updatedName,
                     newEmail: updatedEmail,
                     oldPassword,
-                    newPassword: newPassword ? newPassword : undefined,
+                    newPassword: newPassword || undefined, // Endast skicka om det finns
                 }),
             });
 
