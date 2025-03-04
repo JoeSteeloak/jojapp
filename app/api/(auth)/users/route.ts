@@ -29,21 +29,33 @@ export const GET = async (request: NextRequest) => {
     }
 };
 
-
 // Create new user
 export const POST = async (request: Request) => {
     try {
-        const { username, email, password } = await request.json(); 
+        const { username, email, password } = await request.json();
 
-        if (!username || !email || !password) { //Kontrollera att email finns
-            return new NextResponse("Username, email, and password are required", { status: 400 });
+        if (!username || !email || !password) {
+            return new NextResponse(
+                JSON.stringify({ message: "Username, email, and password are required" }),
+                { status: 400 }
+            );
         }
 
         await connect();
 
+        // Kontrollera om användaren redan finns
+        const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        if (existingUser) {
+            const field = existingUser.email === email ? "email" : "username";
+            return new NextResponse(
+                JSON.stringify({ message: `${field} is already taken` }),
+                { status: 400 }
+            );
+        }
+
         // Hasha lösenord
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, email, password: hashedPassword }); 
+        const newUser = new User({ username, email, password: hashedPassword });
 
         await newUser.save();
         return new NextResponse(JSON.stringify({ message: "User created" }), { status: 201 });
@@ -53,11 +65,9 @@ export const POST = async (request: Request) => {
     }
 };
 
-
 // Update user (Protected)
 export const PATCH = async (request: NextRequest) => {
     try {
-        // Verifiera token och hämta användaren
         const decoded = verifyToken(request);
         if (!decoded) {
             return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
@@ -65,7 +75,6 @@ export const PATCH = async (request: NextRequest) => {
 
         await connect();
 
-        // Hämta data från request
         const body = await request.json();
         const { userId, newUsername, oldPassword, newPassword } = body;
 
@@ -92,7 +101,7 @@ export const PATCH = async (request: NextRequest) => {
             );
         }
 
-        //  Kontrollera att `oldPassword` matchar det lagrade lösenordet
+        // Kontrollera att lösenordet är korrekt
         const passwordMatch = await bcrypt.compare(oldPassword, user.password);
         if (!passwordMatch) {
             return new NextResponse(
@@ -101,13 +110,24 @@ export const PATCH = async (request: NextRequest) => {
             );
         }
 
+        // Kolla om användarnamnet är upptaget
+        if (newUsername !== user.username) {
+            const existingUser = await User.findOne({ username: newUsername });
+            if (existingUser) {
+                return new NextResponse(
+                    JSON.stringify({ message: "Username is already taken" }),
+                    { status: 400 }
+                );
+            }
+        }
+
         // Om `newPassword` anges, hash det innan uppdatering
         let updatedPassword = user.password;
         if (newPassword) {
             updatedPassword = await bcrypt.hash(newPassword, 10);
         }
 
-        // Uppdatera användaren i databasen
+        // Uppdatera användaren
         const updatedUser = await User.findOneAndUpdate(
             { _id: new ObjectId(userId) },
             { username: newUsername, password: updatedPassword },
@@ -127,9 +147,7 @@ export const PATCH = async (request: NextRequest) => {
         );
 
     } catch (error: any) {
-        return new NextResponse("Error in updating user: " + error.message, {
-            status: 500
-        });
+        return new NextResponse("Error in updating user: " + error.message, { status: 500 });
     }
 };
 
@@ -160,9 +178,7 @@ export const DELETE = async (request: NextRequest) => {
 
         await connect();
 
-        const deletedUser = await User.findByIdAndDelete(
-            new Types.ObjectId(userId)
-        );
+        const deletedUser = await User.findByIdAndDelete(new Types.ObjectId(userId));
 
         if (!deletedUser) {
             return new NextResponse(
@@ -176,8 +192,6 @@ export const DELETE = async (request: NextRequest) => {
             { status: 200 }
         );
     } catch (error: any) {
-        return new NextResponse("Error in deleting user: " + error.message, {
-            status: 500
-        });
+        return new NextResponse("Error in deleting user: " + error.message, { status: 500 });
     }
 };

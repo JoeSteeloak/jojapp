@@ -24,8 +24,8 @@ const RegisterForm = () => {
             });
 
             if (!res.ok) {
-                const errorMessage = await res.text(); // Läser backend-svar för mer info
-                throw new Error(errorMessage || "Registration failed");
+                const errorData = await res.json(); // Läser JSON från backend
+                throw new Error(errorData.message || "Registration failed");
             }
 
             setSuccess("Account created successfully! You can now log in.");
@@ -33,7 +33,7 @@ const RegisterForm = () => {
             setEmail("");
             setPassword("");
         } catch (err: any) {
-            setError(err.message);
+            setError(err.message || "An unexpected error occurred.");
         }
     };
 
@@ -76,3 +76,4 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
+
