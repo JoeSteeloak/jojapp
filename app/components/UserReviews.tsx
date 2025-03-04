@@ -114,7 +114,11 @@ const UserReviews = ({ userId }: { userId: string }) => {
                         <li key={review._id} className="border p-4 my-2">
                             <p><strong>{bookTitles[review.bookId] || "Loading book title..."}</strong></p>
                             <p>{review.comment}</p>
-                            <p>Rating: {review.rating} ⭐</p>
+                            <p>Rating: {review.rating === 1 && "⭐"}
+                                {review.rating === 2 && "⭐⭐"}
+                                {review.rating === 3 && "⭐⭐⭐"}
+                                {review.rating === 4 && "⭐⭐⭐⭐"}
+                                {review.rating === 5 && "⭐⭐⭐⭐⭐"}</p>
                             <button
                                 onClick={() => {
                                     setEditingReview(review);
