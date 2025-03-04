@@ -12,15 +12,14 @@ export const GET = async (request: NextRequest) => {
         await connect();
         const { searchParams } = new URL(request.url);
         const userId = searchParams.get("userId");
-        const bookId = searchParams.get("bookId"); // Hämta bookId från query-param
+        const bookId = searchParams.get("bookId");
 
-        // Om vi söker på en specifik bok
+        let query: any = {};
+
         if (bookId) {
-            const reviews = await Review.find({ bookId });
-            return new NextResponse(JSON.stringify(reviews), { status: 200 });
+            query.bookId = bookId;
         }
 
-        // Om vi söker på en specifik användare
         if (userId) {
             if (!Types.ObjectId.isValid(userId)) {
                 return new NextResponse(
@@ -37,12 +36,12 @@ export const GET = async (request: NextRequest) => {
                 );
             }
 
-            const reviews = await Review.find({ user: new Types.ObjectId(userId) });
-            return new NextResponse(JSON.stringify(reviews), { status: 200 });
+            query.user = new Types.ObjectId(userId);
         }
 
-        // Om ingen userId eller bookId anges, hämta alla recensioner
-        const reviews = await Review.find();
+        // Hämtar recensioner och inkluderar användarnamnet istället för bara userId
+        const reviews = await Review.find(query).populate("user", "username"); 
+
         return new NextResponse(JSON.stringify(reviews), { status: 200 });
 
     } catch (error: any) {
@@ -51,6 +50,7 @@ export const GET = async (request: NextRequest) => {
         });
     }
 };
+
 
 
 // POST - Create new review

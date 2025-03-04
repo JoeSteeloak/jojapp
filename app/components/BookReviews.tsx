@@ -2,8 +2,17 @@
 
 import { useEffect, useState } from "react";
 
+interface Review {
+    _id: string;
+    comment: string;
+    rating: number;
+    bookId: string;
+    user: { username: string } | null; // Användarnamnet istället för userId
+}
+
+
 const BookReviews = ({ bookId }: { bookId: string }) => {
-    const [reviews, setReviews] = useState<{ id: string; user: string; comment: string; rating: number }[]>([]);
+    const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +30,7 @@ const BookReviews = ({ bookId }: { bookId: string }) => {
                 setLoading(false);
             }
         };
-        
+
 
         fetchReviews();
     }, [bookId]);
@@ -35,8 +44,8 @@ const BookReviews = ({ bookId }: { bookId: string }) => {
             {reviews.length > 0 ? (
                 <ul className="mt-4 space-y-2">
                     {reviews.map((review) => (
-                        <li key={review.id} className="border p-2 rounded-lg">
-                            <p className="font-semibold">{review.user}:</p>
+                        <li key={review._id} className="border p-2 rounded-lg">
+                            <h3 className="font-bold">{review.user?.username || "Okänd användare"}</h3>
                             <p>{review.comment}</p>
                             <p>{review.rating}/5</p>
                         </li>
