@@ -7,21 +7,27 @@ interface Review {
     comment: string;
     rating: number;
     bookId: string;
-}
-
-interface Book {
-    id: string;
-    title: string;
+    bookTitle: string;
 }
 
 const UserReviews = ({ userId }: { userId: string }) => {
     const [reviews, setReviews] = useState<Review[]>([]);
-    const [books, setBooks] = useState<{ [key: string]: string }>({}); // Lagrar boktitlar
     const [error, setError] = useState<string | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingReview, setEditingReview] = useState<Review | null>(null);
+    const [deletingReview, setDeletingReview] = useState<Review | null>(null);
     const [newComment, setNewComment] = useState("");
-    const [newRating, setNewRating] = useState<number>(0);
+    const [newRating, setNewRating] = useState(5);
+
+    const fetchUserReviews = async () => {
+        try {
+            const res = await fetch(`/api/reviews?userId=${userId}`);
+            if (!res.ok) throw new Error("Failed to fetch reviews");
+            const data = await res.json();
+            setReviews(data);
+        } catch (error: any) {
+            setError(error.message);
+        }
+    };
 
     useEffect(() => {
         if (userId) {
@@ -29,90 +35,48 @@ const UserReviews = ({ userId }: { userId: string }) => {
         }
     }, [userId]);
 
-    const fetchUserReviews = async () => {
-        try {
-            const res = await fetch(`/api/reviews?userId=${userId}`);
-            if (!res.ok) throw new Error("Failed to fetch reviews");
-
-            const data: Review[] = await res.json();
-            setReviews(data);
-
-            // Hämta boktitlar för varje recension
-            data.forEach((review) => fetchBookTitle(review.bookId));
-        } catch (error: any) {
-            setError(error.message);
-        }
-    };
-
-    const fetchBookTitle = async (bookId: string) => {
-        if (books[bookId]) return; // Om vi redan har boktiteln, hämta inte igen
-
-        try {
-            const res = await fetch(`https://www.googleapis.com/books/v1/volumes/${bookId}`);
-            if (!res.ok) throw new Error("Failed to fetch book details");
-
-            const data = await res.json();
-            setBooks((prev) => ({ ...prev, [bookId]: data.volumeInfo.title }));
-        } catch (error: any) {
-            console.error("Error fetching book title:", error);
-        }
-    };
-
-    const handleDelete = async (reviewId: string) => {
+    const handleDelete = async () => {
+        if (!deletingReview) return;
         try {
             const token = localStorage.getItem("token");
             if (!token) {
                 setError("You need to be logged in to delete a review.");
                 return;
             }
-
-            const res = await fetch(`/api/reviews/${reviewId}?userId=${userId}`, {
+            const res = await fetch(`/api/reviews/${deletingReview._id}`, {
                 method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { Authorization: `Bearer ${token}` },
             });
-
             if (!res.ok) throw new Error("Failed to delete review");
-
-            setReviews(reviews.filter((review) => review._id !== reviewId));
+            setReviews(reviews.filter((review) => review._id !== deletingReview._id));
+            setDeletingReview(null);
         } catch (error: any) {
             setError(error.message);
         }
     };
 
-    const openEditModal = (review: Review) => {
+    const handleEdit = (review: Review) => {
         setEditingReview(review);
         setNewComment(review.comment);
         setNewRating(review.rating);
-        setIsModalOpen(true);
     };
 
-    const handleUpdate = async () => {
+    const updateReview = async () => {
         if (!editingReview) return;
-
         try {
             const token = localStorage.getItem("token");
             if (!token) {
                 setError("You need to be logged in to edit a review.");
                 return;
             }
-
-            const res = await fetch(`/api/reviews/${editingReview._id}?userId=${userId}`, {
+            const res = await fetch(`/api/reviews/${editingReview._id}`, {
                 method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                 body: JSON.stringify({ comment: newComment, rating: newRating }),
             });
-
-            if (!res.ok) throw new Error("Failed to update review");
-
-            const updatedReview = await res.json();
-            setReviews(reviews.map((r) => (r._id === editingReview._id ? updatedReview.review : r)));
-
-            setIsModalOpen(false);
+            if (!res.ok) throw new Error("Failed to edit review");
+            setReviews(reviews.map((r) => (r._id === editingReview._id ? { ...r, comment: newComment, rating: newRating } : r)));
+            setEditingReview(null);
         } catch (error: any) {
             setError(error.message);
         }
@@ -128,60 +92,37 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 <ul>
                     {reviews.map((review) => (
                         <li key={review._id} className="border p-4 my-2">
-                            <p className="text-lg font-semibold">
-                                {books[review.bookId] || "Loading title..."}
-                            </p>
+                            <p><strong>{review.bookTitle}</strong></p>
                             <p>{review.comment}</p>
                             <p>Rating: {review.rating} ⭐</p>
-                            <button
-                                onClick={() => openEditModal(review)}
-                                className="text-blue-500"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => handleDelete(review._id)}
-                                className="text-red-500 ml-4"
-                            >
-                                Delete
-                            </button>
+                            <button onClick={() => handleEdit(review)} className="text-blue-500">Edit</button>
+                            <button onClick={() => setDeletingReview(review)} className="text-red-500 ml-4">Delete</button>
                         </li>
                     ))}
                 </ul>
             )}
 
-            {/* Modal för att redigera en recension */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white p-6 rounded shadow-lg w-96">
-                        <h2 className="text-xl font-bold mb-4">Edit Review</h2>
-                        <textarea
-                            className="w-full border p-2 mb-2"
-                            value={newComment}
-                            onChange={(e) => setNewComment(e.target.value)}
-                        />
-                        <input
-                            type="number"
-                            className="w-full border p-2 mb-4"
-                            value={newRating}
-                            onChange={(e) => setNewRating(Number(e.target.value))}
-                            min={1}
-                            max={5}
-                        />
-                        <div className="flex justify-end">
-                            <button
-                                onClick={() => setIsModalOpen(false)}
-                                className="mr-2 bg-gray-300 px-4 py-2 rounded"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleUpdate}
-                                className="bg-blue-500 text-white px-4 py-2 rounded"
-                            >
-                                Save
-                            </button>
-                        </div>
+            {/* Edit Modal */}
+            {editingReview && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-5 rounded-lg">
+                        <h2 className="text-lg font-bold">Edit Review</h2>
+                        <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} className="w-full border p-2" />
+                        <input type="number" value={newRating} onChange={(e) => setNewRating(Number(e.target.value))} className="border p-2 w-full mt-2" />
+                        <button onClick={updateReview} className="bg-blue-500 text-white p-2 mt-2 rounded">Save</button>
+                        <button onClick={() => setEditingReview(null)} className="text-red-500 ml-2">Cancel</button>
+                    </div>
+                </div>
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {deletingReview && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-5 rounded-lg">
+                        <h2 className="text-lg font-bold">Are you sure you want to delete this review?</h2>
+                        <p>{deletingReview.comment}</p>
+                        <button onClick={handleDelete} className="bg-red-500 text-white p-2 mt-2 rounded">Yes, Delete</button>
+                        <button onClick={() => setDeletingReview(null)} className="text-gray-500 ml-2">No, Cancel</button>
                     </div>
                 </div>
             )}
