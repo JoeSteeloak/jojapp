@@ -5,7 +5,7 @@ import SearchBar from "@/app/components/SearchBar";
 import { BookInterface } from "@/app/types/BookInterface";
 import Link from "next/link";
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 6;
 
 const Search = () => {
     const [books, setBooks] = useState<BookInterface[]>([]);
