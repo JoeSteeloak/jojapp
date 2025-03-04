@@ -6,13 +6,21 @@ import { NextResponse, NextRequest } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { JwtPayload } from "jsonwebtoken";
 
-// GET Reviews (All or By User)
+// GET Reviews (All or By User or by BookId)
 export const GET = async (request: NextRequest) => {
     try {
         await connect();
         const { searchParams } = new URL(request.url);
         const userId = searchParams.get("userId");
+        const bookId = searchParams.get("bookId"); // Hämta bookId från query-param
 
+        // Om vi söker på en specifik bok
+        if (bookId) {
+            const reviews = await Review.find({ bookId });
+            return new NextResponse(JSON.stringify(reviews), { status: 200 });
+        }
+
+        // Om vi söker på en specifik användare
         if (userId) {
             if (!Types.ObjectId.isValid(userId)) {
                 return new NextResponse(
@@ -33,7 +41,7 @@ export const GET = async (request: NextRequest) => {
             return new NextResponse(JSON.stringify(reviews), { status: 200 });
         }
 
-        // Om ingen userId anges, hämta alla recensioner
+        // Om ingen userId eller bookId anges, hämta alla recensioner
         const reviews = await Review.find();
         return new NextResponse(JSON.stringify(reviews), { status: 200 });
 
@@ -43,6 +51,7 @@ export const GET = async (request: NextRequest) => {
         });
     }
 };
+
 
 // POST - Create new review
 export const POST = async (request: NextRequest) => {

@@ -21,6 +21,7 @@ const BookReviews = ({ bookId }: { bookId: string }) => {
                 setLoading(false);
             }
         };
+        
 
         fetchReviews();
     }, [bookId]);
