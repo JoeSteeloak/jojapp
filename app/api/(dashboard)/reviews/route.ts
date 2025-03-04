@@ -47,12 +47,19 @@ export const GET = async (request: NextRequest) => {
 // POST - Create new review
 export const POST = async (request: NextRequest) => {
     try {
-        const { comment, rating } = await request.json();
+        const { comment, rating, bookId } = await request.json(); // Lägg till bookId
 
+        // Kontrollera att bookId finns i requesten
+        if (!bookId) {
+            return new NextResponse(JSON.stringify({ message: "bookId is required" }), { status: 400 });
+        }
+
+        // Kolla autentisering
         const authHeader = request.headers.get("Authorization");
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return new NextResponse(JSON.stringify({ message: "Unauthorized" }), { status: 401 });
         }
+
         const token = authHeader.split(" ")[1];
         const decoded = verifyToken(token) as JwtPayload | null;
         if (!decoded || !decoded.userId) {
@@ -61,9 +68,20 @@ export const POST = async (request: NextRequest) => {
 
         await connect();
 
-        const newReview = new Review({ comment, rating, user: new Types.ObjectId(decoded.userId) });
+        // Inkludera bookId i databasen
+        const newReview = new Review({
+            comment,
+            rating,
+            bookId, // Lägg till bookId 
+            user: new Types.ObjectId(decoded.userId),
+        });
+
         await newReview.save();
-        return new NextResponse(JSON.stringify({ message: "Review is created", review: newReview }), { status: 201 });
+
+        return new NextResponse(
+            JSON.stringify({ message: "Review is created", review: newReview }),
+            { status: 201 }
+        );
 
     } catch (error: any) {
         return new NextResponse("Error in creating review: " + error.message, { status: 500 });
