@@ -29,14 +29,14 @@ const BookReviews = ({ bookId, reviewsUpdated }: { bookId: string; reviewsUpdate
 
     return (
         <div className="p-6">
-            <h2 className="text-xl font-bold mb-4">Recensioner</h2>
+            <h2 className="text-xl font-bold mb-4">Reviews</h2>
 
-            {reviews.length === 0 ? <p>Inga recensioner än.</p> : reviews.map((review) => (
+            {reviews.length === 0 ? <p>No reviews yet.</p> : reviews.map((review) => (
                 <div key={review._id} className="border p-4 my-2">
-                    <h3 className="font-bold">{review.user?.username || "Okänd användare"}</h3>
+                    <h3 className="font-bold">{review.user?.username || "Unknown user"}</h3>
                     <p>{review.comment}</p>
                     <p>
-                        Betyg:
+                        Rating:
                         {review.rating === 1 && "⭐"}
                         {review.rating === 2 && "⭐⭐"}
                         {review.rating === 3 && "⭐⭐⭐"}

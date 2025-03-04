@@ -46,19 +46,19 @@ const ReviewForm = ({ bookId, onReviewAdded }: { bookId: string; onReviewAdded: 
 
     return (
         <div className="mt-6">
-            <h2 className="text-lg font-bold">Skriv en recension</h2>
+            <h2 className="text-lg font-bold">Write a review</h2>
             {error && <p className="text-red-500">{error}</p>}
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
                 <textarea
                     className="border p-2"
-                    placeholder="Skriv din recension..."
+                    placeholder="Write a review..."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     required
                 ></textarea>
 
                 <label>
-                    Betyg:
+                    Rating:
                     <select value={rating} onChange={(e) => setRating(Number(e.target.value))} className="border p-2 ml-2">
                         {[1, 2, 3, 4, 5].map((num) => (
                             <option key={num} value={num}>
@@ -73,7 +73,7 @@ const ReviewForm = ({ bookId, onReviewAdded }: { bookId: string; onReviewAdded: 
                     </select>
                 </label>
 
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2">Skicka recension</button>
+                <button type="submit" className="bg-blue-500 text-white px-4 py-2">Send review</button>
             </form>
         </div>
     );

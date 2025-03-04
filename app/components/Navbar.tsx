@@ -60,7 +60,7 @@ const Navbar = () => {
                             </button>
                         </li>
                         <li className="ml-auto">
-                            <span>Du är inloggad som {username}</span>
+                            <span>You are logged in as {username}</span>
                         </li>
                     </>
                 ) : (
