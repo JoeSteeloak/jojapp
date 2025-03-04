@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BookInterface } from "@/app/types/BookInterface";
 
 interface SearchBarProps {
@@ -11,6 +11,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResults }) => {
     const [query, setQuery] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        // Hämta senaste sökning från sessionStorage
+        const savedQuery = sessionStorage.getItem("lastSearchQuery");
+        const savedResults = sessionStorage.getItem("lastSearchResults");
+
+        if (savedQuery && savedResults) {
+            setQuery(savedQuery);
+            onResults(JSON.parse(savedResults)); // Återställ tidigare sökresultat
+        }
+    }, []);
 
     const handleSearch = async () => {
         if (!query.trim()) return;
@@ -40,6 +51,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResults }) => {
                 description: item.volumeInfo.description || "No description available",
                 genre: item.volumeInfo.categories || ["Unknown Genre"],
             })) || [];
+
+            // Spara i sessionStorage
+            sessionStorage.setItem("lastSearchQuery", query);
+            sessionStorage.setItem("lastSearchResults", JSON.stringify(booksData));
 
             onResults(booksData);
         } catch (err: any) {
