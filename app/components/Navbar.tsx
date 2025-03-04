@@ -7,27 +7,48 @@ const Navbar = () => {
     const pathname = usePathname();
     const router = useRouter();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [username, setUsername] = useState<string | null>(null);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        setIsLoggedIn(!!token);
+        if (token) {
+            setIsLoggedIn(true);
+
+            // Hämta användardata från API med JWT-token
+            fetch("/api/users", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.username) {
+                        setUsername(data.username); // Sätt användarnamnet från API-svaret
+                    }
+                })
+                .catch((error) => console.error("Failed to fetch user data:", error));
+        }
     }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
         setIsLoggedIn(false);
+        setUsername(null);
         router.push("/login");
     };
 
     return (
         <nav className="bg-blue-600 text-white p-4">
-            <ul className="flex gap-4">
-                <li>
-                    <Link href="/" className={pathname === "/" ? "font-bold" : ""}>Home</Link>
-                </li>
-                <li>
-                    <Link href="/search" className={pathname === "/search" ? "font-bold" : ""}>Search</Link>
-                </li>
+            <ul className="flex gap-4 justify-between w-full">
+                <div className="flex gap-4">
+                    <li>
+                        <Link href="/" className={pathname === "/" ? "font-bold" : ""}>Home</Link>
+                    </li>
+                    <li>
+                        <Link href="/search" className={pathname === "/search" ? "font-bold" : ""}>Search</Link>
+                    </li>
+                </div>
                 {isLoggedIn ? (
                     <>
                         <li>
@@ -37,6 +58,9 @@ const Navbar = () => {
                             <button onClick={handleLogout} className="bg-red-500 px-3 py-1 rounded">
                                 Logout
                             </button>
+                        </li>
+                        <li className="ml-auto">
+                            <span>Du är inloggad som {username}</span>
                         </li>
                     </>
                 ) : (
@@ -50,4 +74,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
