@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import { UserInterface } from "@/app/types/UserInterface";
+import UserReviews from "@/app/components/UserReviews";
 
 const User = () => {
     const router = useRouter();
@@ -142,6 +143,7 @@ const User = () => {
                     </form>
                 )}
             </div>
+            {userId && <UserReviews userId={userId} />}
         </ProtectedRoute>
     );
 };
