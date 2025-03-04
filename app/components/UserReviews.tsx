@@ -7,7 +7,6 @@ interface Review {
     comment: string;
     rating: number;
     bookId: string;
-    bookTitle: string;
 }
 
 const UserReviews = ({ userId }: { userId: string }) => {
@@ -15,8 +14,7 @@ const UserReviews = ({ userId }: { userId: string }) => {
     const [error, setError] = useState<string | null>(null);
     const [editingReview, setEditingReview] = useState<Review | null>(null);
     const [deletingReview, setDeletingReview] = useState<Review | null>(null);
-    const [newComment, setNewComment] = useState("");
-    const [newRating, setNewRating] = useState(5);
+    const [bookTitles, setBookTitles] = useState<{ [key: string]: string }>({});
 
     const fetchUserReviews = async () => {
         try {
@@ -24,6 +22,17 @@ const UserReviews = ({ userId }: { userId: string }) => {
             if (!res.ok) throw new Error("Failed to fetch reviews");
             const data = await res.json();
             setReviews(data);
+
+            // Hämta boktitlar
+            const titles: { [key: string]: string } = {};
+            await Promise.all(data.map(async (review: Review) => {
+                const bookRes = await fetch(`https://www.googleapis.com/books/v1/volumes/${review.bookId}`);
+                if (bookRes.ok) {
+                    const bookData = await bookRes.json();
+                    titles[review.bookId] = bookData.volumeInfo.title;
+                }
+            }));
+            setBookTitles(titles);
         } catch (error: any) {
             setError(error.message);
         }
@@ -43,25 +52,23 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 setError("You need to be logged in to delete a review.");
                 return;
             }
+
             const res = await fetch(`/api/reviews/${deletingReview._id}`, {
                 method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             });
+
             if (!res.ok) throw new Error("Failed to delete review");
-            setReviews(reviews.filter((review) => review._id !== deletingReview._id));
+            setReviews(reviews.filter((r) => r._id !== deletingReview._id));
             setDeletingReview(null);
         } catch (error: any) {
             setError(error.message);
         }
     };
 
-    const handleEdit = (review: Review) => {
-        setEditingReview(review);
-        setNewComment(review.comment);
-        setNewRating(review.rating);
-    };
-
-    const updateReview = async () => {
+    const handleEdit = async (newComment: string, newRating: number) => {
         if (!editingReview) return;
         try {
             const token = localStorage.getItem("token");
@@ -69,11 +76,16 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 setError("You need to be logged in to edit a review.");
                 return;
             }
+
             const res = await fetch(`/api/reviews/${editingReview._id}`, {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
                 body: JSON.stringify({ comment: newComment, rating: newRating }),
             });
+
             if (!res.ok) throw new Error("Failed to edit review");
             setReviews(reviews.map((r) => (r._id === editingReview._id ? { ...r, comment: newComment, rating: newRating } : r)));
             setEditingReview(null);
@@ -92,38 +104,32 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 <ul>
                     {reviews.map((review) => (
                         <li key={review._id} className="border p-4 my-2">
-                            <p><strong>{review.bookTitle}</strong></p>
+                            <p><strong>{bookTitles[review.bookId] || "Laddar boktitel..."}</strong></p>
                             <p>{review.comment}</p>
                             <p>Rating: {review.rating} ⭐</p>
-                            <button onClick={() => handleEdit(review)} className="text-blue-500">Edit</button>
+                            <button onClick={() => setEditingReview(review)} className="text-blue-500">Edit</button>
                             <button onClick={() => setDeletingReview(review)} className="text-red-500 ml-4">Delete</button>
                         </li>
                     ))}
                 </ul>
             )}
 
-            {/* Edit Modal */}
+            {/* Edit modal */}
             {editingReview && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-5 rounded-lg">
-                        <h2 className="text-lg font-bold">Edit Review</h2>
-                        <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} className="w-full border p-2" />
-                        <input type="number" value={newRating} onChange={(e) => setNewRating(Number(e.target.value))} className="border p-2 w-full mt-2" />
-                        <button onClick={updateReview} className="bg-blue-500 text-white p-2 mt-2 rounded">Save</button>
-                        <button onClick={() => setEditingReview(null)} className="text-red-500 ml-2">Cancel</button>
-                    </div>
+                <div className="modal">
+                    <h3>Edit Review</h3>
+                    <textarea defaultValue={editingReview.comment} id="editComment"></textarea>
+                    <button onClick={() => handleEdit((document.getElementById("editComment") as HTMLTextAreaElement).value, editingReview.rating)}>Save</button>
+                    <button onClick={() => setEditingReview(null)}>Cancel</button>
                 </div>
             )}
 
-            {/* Delete Confirmation Modal */}
+            {/* Delete confirm modal */}
             {deletingReview && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-5 rounded-lg">
-                        <h2 className="text-lg font-bold">Are you sure you want to delete this review?</h2>
-                        <p>{deletingReview.comment}</p>
-                        <button onClick={handleDelete} className="bg-red-500 text-white p-2 mt-2 rounded">Yes, Delete</button>
-                        <button onClick={() => setDeletingReview(null)} className="text-gray-500 ml-2">No, Cancel</button>
-                    </div>
+                <div className="modal">
+                    <h3>Are you sure you want to delete this review?</h3>
+                    <button onClick={handleDelete} className="text-red-500">Yes, Delete</button>
+                    <button onClick={() => setDeletingReview(null)}>Cancel</button>
                 </div>
             )}
         </div>
