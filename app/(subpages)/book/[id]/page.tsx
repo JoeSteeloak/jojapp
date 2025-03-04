@@ -1,16 +1,17 @@
 "use client";
 
+import { useState } from "react";
+import { useParams } from "next/navigation"; // Importera useParams från Next.js
 import BookDetails from "@/app/components/BookDetails";
 import BookReviews from "@/app/components/BookReviews";
 import ReviewForm from "@/app/components/ReviewForm";
-import { useState } from "react";
 
-const page = async ({ params }: { params: { id: string } }) => {
-  const { id } = params;
+const Page = () => {
+  const params = useParams(); // Hämta params som objekt
+  const id = params.id as string; // Hämta id och tvinga till string
 
   const [reviewsUpdated, setReviewsUpdated] = useState(false);
 
-  // När en recension är skapad, sätt reviewsUpdated till true för att uppdatera recensionerna
   const handleReviewAdded = () => {
     setReviewsUpdated((prev) => !prev);
   };
@@ -18,14 +19,10 @@ const page = async ({ params }: { params: { id: string } }) => {
   return (
     <div>
       <BookDetails bookId={id} />
-
-      {/* Formulär för att skapa recensioner */}
-      <ReviewForm bookId={id} />
-
-      {/* Lista av recensioner */}
+      <ReviewForm bookId={id} onReviewAdded={handleReviewAdded} />
       <BookReviews bookId={id} reviewsUpdated={reviewsUpdated} />
     </div>
   );
 };
 
-export default page;
+export default Page;

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const ReviewForm = ({ bookId }: { bookId: string }) => {
+const ReviewForm = ({ bookId, onReviewAdded }: { bookId: string; onReviewAdded: () => void }) => {
     const [comment, setComment] = useState("");
     const [rating, setRating] = useState<number>(5);
     const [error, setError] = useState<string | null>(null);
@@ -35,6 +35,9 @@ const ReviewForm = ({ bookId }: { bookId: string }) => {
             // Rensa formuläret
             setComment("");
             setRating(5);
+
+            // Trigga uppdatering i page.tsx
+            onReviewAdded();
 
         } catch (error: any) {
             setError(error.message);
