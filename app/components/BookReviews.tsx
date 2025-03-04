@@ -35,7 +35,14 @@ const BookReviews = ({ bookId, reviewsUpdated }: { bookId: string; reviewsUpdate
                 <div key={review._id} className="border p-4 my-2">
                     <h3 className="font-bold">{review.user?.username || "Okänd användare"}</h3>
                     <p>{review.comment}</p>
-                    <p>Betyg: {review.rating} ⭐</p>
+                    <p>
+                        Betyg:
+                        {review.rating === 1 && "⭐"}
+                        {review.rating === 2 && "⭐⭐"}
+                        {review.rating === 3 && "⭐⭐⭐"}
+                        {review.rating === 4 && "⭐⭐⭐⭐"}
+                        {review.rating === 5 && "⭐⭐⭐⭐⭐"}
+                    </p>
                 </div>
             ))}
         </div>

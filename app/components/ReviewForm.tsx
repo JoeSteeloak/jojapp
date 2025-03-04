@@ -1,4 +1,4 @@
-"use client";  
+"use client";
 
 import { useState } from "react";
 
@@ -61,7 +61,14 @@ const ReviewForm = ({ bookId, onReviewAdded }: { bookId: string; onReviewAdded: 
                     Betyg:
                     <select value={rating} onChange={(e) => setRating(Number(e.target.value))} className="border p-2 ml-2">
                         {[1, 2, 3, 4, 5].map((num) => (
-                            <option key={num} value={num}>{num} ⭐</option>
+                            <option key={num} value={num}>
+                                {num}{" "}
+                                {num === 1 && "⭐"}
+                                {num === 2 && "⭐⭐"}
+                                {num === 3 && "⭐⭐⭐"}
+                                {num === 4 && "⭐⭐⭐⭐"}
+                                {num === 5 && "⭐⭐⭐⭐⭐"}
+                            </option>
                         ))}
                     </select>
                 </label>
