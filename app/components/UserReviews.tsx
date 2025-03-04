@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface Review {
     _id: string;
@@ -17,6 +18,7 @@ const UserReviews = ({ userId }: { userId: string }) => {
     const [bookTitles, setBookTitles] = useState<{ [key: string]: string }>({});
     const [editedComment, setEditedComment] = useState<string>("");
     const [editedRating, setEditedRating] = useState<number>(0);
+    const router = useRouter()
 
     const fetchUserReviews = async () => {
         try {
@@ -118,7 +120,12 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 <ul>
                     {reviews.map((review) => (
                         <li key={review._id} className="border p-4 my-2">
-                            <p><strong>{bookTitles[review.bookId] || "Loading book title..."}</strong></p>
+                            <p><strong
+                                    className="text-blue-500 cursor-pointer hover:underline"
+                                    onClick={() => router.push(`/book/${review.bookId}`)}
+                                >
+                                    {bookTitles[review.bookId] || "Loading book title..."}
+                                </strong></p>
                             <p>{review.comment}</p>
                             <p>Rating: {"⭐".repeat(review.rating)}</p>
                             <button
