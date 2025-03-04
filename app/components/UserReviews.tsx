@@ -32,7 +32,9 @@ const UserReviews = ({ userId }: { userId: string }) => {
                     const bookRes = await fetch(`https://www.googleapis.com/books/v1/volumes/${review.bookId}`);
                     if (bookRes.ok) {
                         const bookData = await bookRes.json();
-                        titles[review.bookId] = bookData.volumeInfo.title;
+                        titles[review.bookId] = bookData.volumeInfo?.title || "Unknown title";
+                    } else {
+                        titles[review.bookId] = "Unknown title";
                     }
                 })
             );
@@ -56,15 +58,19 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 setError("You need to be logged in to delete a review.");
                 return;
             }
-
-            const res = await fetch(`/api/reviews/${deletingReview._id}`, {
+    
+            const res = await fetch(`/api/reviews/${deletingReview._id}?userId=${userId}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
-            if (!res.ok) throw new Error("Failed to delete review");
+    
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || "Failed to delete review");
+            }
+    
             setReviews(reviews.filter((r) => r._id !== deletingReview._id));
             setDeletingReview(null);
         } catch (error: any) {
@@ -80,8 +86,8 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 setError("You need to be logged in to edit a review.");
                 return;
             }
-
-            const res = await fetch(`/api/reviews/${editingReview._id}`, {
+    
+            const res = await fetch(`/api/reviews/${editingReview._id}?userId=${userId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -89,13 +95,13 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 },
                 body: JSON.stringify({ comment: editedComment, rating: editedRating }),
             });
-
-            if (!res.ok) throw new Error("Failed to edit review");
-
-            setReviews(reviews.map((r) =>
-                r._id === editingReview._id ? { ...r, comment: editedComment, rating: editedRating } : r
-            ));
-
+    
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || "Failed to edit review");
+            }
+    
+            setReviews(reviews.map((r) => (r._id === editingReview._id ? { ...r, comment: editedComment, rating: editedRating } : r)));
             setEditingReview(null);
         } catch (error: any) {
             setError(error.message);
@@ -114,11 +120,7 @@ const UserReviews = ({ userId }: { userId: string }) => {
                         <li key={review._id} className="border p-4 my-2">
                             <p><strong>{bookTitles[review.bookId] || "Loading book title..."}</strong></p>
                             <p>{review.comment}</p>
-                            <p>Rating: {review.rating === 1 && "⭐"}
-                                {review.rating === 2 && "⭐⭐"}
-                                {review.rating === 3 && "⭐⭐⭐"}
-                                {review.rating === 4 && "⭐⭐⭐⭐"}
-                                {review.rating === 5 && "⭐⭐⭐⭐⭐"}</p>
+                            <p>Rating: {"⭐".repeat(review.rating)}</p>
                             <button
                                 onClick={() => {
                                     setEditingReview(review);
@@ -181,4 +183,3 @@ const UserReviews = ({ userId }: { userId: string }) => {
 };
 
 export default UserReviews;
-
