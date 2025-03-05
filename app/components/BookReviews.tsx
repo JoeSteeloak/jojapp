@@ -39,7 +39,7 @@ const BookReviews = ({ bookId, reviewsUpdated }: { bookId: string; reviewsUpdate
     <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Reviews</h2>
 
     {sortedReviews.length === 0 ? (
-        <p className="text-gray-500">No reviews yet.</p>
+        <p className="text-gray-500 text-center text-xl">No reviews yet...</p>
     ) : (
         sortedReviews.map((review) => (
             <div key={review._id} className="bg-white rounded-lg shadow-sm p-4 mb-4 mx-auto max-w-6xl">
