@@ -121,7 +121,7 @@ const UserReviews = ({ userId }: { userId: string }) => {
             ) : (
                 <ul className="space-y-4">
                     {reviews.map((review) => (
-                        <li key={review._id} className="bg-white mx-auto max-w-200 rounded-lg shadow-md p-6 transition-transform hover:scale-102 transform duration-200">
+                        <li key={review._id} className="bg-white mx-auto max-w-6xl rounded-lg shadow-md p-6 transition-transform hover:scale-102 transform duration-200">
                             <div className="flex items-center justify-between mb-4">
                                 <p className="text-lg font-semibold text-blue-600 cursor-pointer hover:underline" onClick={() => router.push(`/book/${review.bookId}`)}>
                                     {bookTitles[review.bookId] || "Loading book title..."}
