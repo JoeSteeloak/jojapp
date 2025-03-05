@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import { UserInterface } from "@/app/types/UserInterface";
 import UserReviews from "@/app/components/UserReviews";
+import { UserPen } from "lucide-react";
 
 const User = () => {
     const router = useRouter();
@@ -93,7 +94,7 @@ const User = () => {
     return (
 <ProtectedRoute>
     <div className="bg-gray-100 min-h-screen py-12"> {/* Grå bakgrund för hela sidan */}
-        <div className="p-6 max-w-xl mx-auto bg-white rounded-lg shadow-md"> {/* Vitt formulär med skugga */}
+        <div className="p-6 max-w-200 mx-auto bg-white rounded-lg shadow-md"> {/* Vitt formulär med skugga */}
             <h1 className="text-2xl font-semibold text-gray-800 mb-8 text-center">User Profile</h1>
 
             {message && <p className="text-red-500 text-center mb-4">{message}</p>}
@@ -146,6 +147,7 @@ const User = () => {
                             type="submit"
                             className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition-colors duration-300 cursor-pointer"
                         >
+                            <UserPen className="inline-block mr-2" size={18} />
                             Update Profile
                         </button>
                     </div>

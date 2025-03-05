@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 const Navbar = () => {
     const pathname = usePathname();
@@ -62,11 +63,12 @@ const Navbar = () => {
                             >
                                 User
                             </Link>
-                            <div className="">Logged in as: {username}</div>
+                            <div className=""><span className="border-l-4 border-yellow-500 h-full mx-4"></span> Logged in as: {username}</div>
                             <button 
                                 onClick={handleLogout} 
                                 className="bg-red-500 text-white font-medium py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-300 cursor-pointer"
                             >
+                                <LogOut className="inline-block mr-2" size={18} />
                                 Logout
                             </button>
                         </div>
@@ -106,6 +108,7 @@ const Navbar = () => {
                                 onClick={handleLogout} 
                                 className="bg-red-500 text-white font-medium py-2 px-4 rounded-md max-w-40 w-auto hover:bg-red-600 transition-colors duration-300 cursor-pointer"
                             >
+                                <LogOut className="inline-block mr-2" size={18} />
                                 Logout
                             </button>
                         </>

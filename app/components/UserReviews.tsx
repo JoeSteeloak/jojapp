@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface Review {
     _id: string;
@@ -139,12 +140,14 @@ const UserReviews = ({ userId }: { userId: string }) => {
                         }}
                         className="text-blue-500 hover:text-blue-700 transition-colors duration-200 cursor-pointer"
                     >
+                        <Pencil className="inline-block mr-2" size={18} />
                         Edit
                     </button>
                     <button
                         onClick={() => setDeletingReview(review)}
                         className="text-red-500 hover:text-red-700 transition-colors duration-200 ml-4 cursor-pointer"
                     >
+                        <Trash2 className="inline-block mr-2" size={18} />
                         Delete
                     </button>
                 </div>
