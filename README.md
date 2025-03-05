@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Book Review API
+
+## Overview
+
+This project is a full-stack application built with **Next.js** that allows users to search for books via the **Google Books API**, create and manage their own reviews, and interact with other users' reviews. The application implements **JWT authentication**, **bcrypt** for password hashing, and uses **MongoDB** with **Mongoose** to store user and review data.
+
+## Features
+
+- **User Authentication**:
+  - Users can sign up, log in, and manage their profiles.
+  - JWT authentication with local storage for session management.
+  - Passwords are hashed using bcrypt.
+
+- **Book Reviews**:
+  - Users can search for books using the Google Books API.
+  - Signed-in users can create, edit, and delete their own reviews.
+  - Public reviews are visible to all users, but only authenticated users can modify or delete their reviews.
+
+- **Frontend**:
+  - Built with **Next.js** for server-side rendering and routing.
+  - **Tailwind CSS** is used for styling.
+  - The frontend uses components, interfaces, and models for better organization and maintainability.
+
+## Technologies
+
+- **Backend**:
+  - **Node.js** with **Next.js** (API Routes).
+  - **MongoDB** with **Mongoose** for database management.
+  - **JWT** for authentication.
+  - **bcrypt** for password hashing.
+  
+- **Frontend**:
+  - **React** (via Next.js).
+  - **Tailwind CSS** for styling.
+  
+- **APIs**:
+  - **Google Books API** for fetching book data.
+  - Custom API for managing user and review data.
+
+## API Endpoints
+
+### Users
+
+- **GET /api/users** - Get all users (admin only).
+- **GET /api/users/:userId** - Get a user by ID.
+- **POST /api/users** - Create a new user.
+- **PATCH /api/users/:userId** - Update user information.
+- **DELETE /api/users/:userId** - Delete a user.
+
+### Reviews
+
+- **GET /api/reviews** - Get all reviews.
+- **GET /api/reviews/book/:bookId** - Get reviews for a specific book.
+- **GET /api/reviews/user/:userId** - Get reviews by a specific user.
+- **POST /api/reviews** - Create a new review.
+- **PATCH /api/reviews/:reviewId** - Edit a review.
+- **DELETE /api/reviews/:reviewId** - Delete a review.
+
+### Authentication
+
+- **POST /api/login** - Log in and get a JWT token.
+
+## Frontend Structure
+
+- **Components**:
+  - Reusable components for UI elements like buttons, forms, and review cards.
+  
+- **Interfaces**:
+  - TypeScript interfaces for users, reviews, and book data.
+
+- **Models**:
+  - Models for user and review data that are used both on the backend and frontend.
+
+- **Routing**:
+  - The frontend uses Next.js routing with folders for organization.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js (v16 or higher).
+- MongoDB database (locally or via a cloud service like MongoDB Atlas).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```
+   git clone <repository-url>
+   ```
 
-## Learn More
+2. Install dependencies:
 
-To learn more about Next.js, take a look at the following resources:
+   ```
+   cd <project-directory>
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Set up environment variables in a `.env.local` file:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```
+   MONGODB_URI=<your-mongodb-uri>
+   JWT_SECRET=<your-jwt-secret>
+   ```
 
-## Deploy on Vercel
+4. Run the development server:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```
+   npm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   Your app should now be running at [http://localhost:3000](http://localhost:3000).
