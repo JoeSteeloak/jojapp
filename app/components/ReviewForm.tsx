@@ -48,7 +48,7 @@ const ReviewForm = ({ bookId, onReviewAdded }: { bookId: string; onReviewAdded: 
 <div className="bg-gray-100 p-6 rounded-lg shadow-md pt-3">
     <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Add review</h2>
 
-    {error && <p className="text-red-500 mb-4">{error}</p>}
+    {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
 
     <form onSubmit={handleSubmit} className="space-y-6 bg-white p-10 rounded-xl shadow-sm mx-auto max-w-6xl">
         <label className="block text-sm font-medium text-gray-600 mb-2">Write a review</label>
