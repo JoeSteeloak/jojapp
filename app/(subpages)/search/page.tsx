@@ -19,62 +19,64 @@ const Search = () => {
     const totalPages = Math.ceil(books.length / ITEMS_PER_PAGE);
 
     return (
-        <div className="p-4">
-            <h2 className="text-xl font-bold mb-4">Search for Books</h2>
-            <SearchBar onResults={setBooks} />
+<div className="p-6 bg-gray-50 rounded-xl shadow-lg">
+    <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Search for Books</h2>
+    <SearchBar onResults={setBooks} />
 
-            {books.length > 0 ? (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full border-collapse border border-gray-300">
-                        <thead>
-                            <tr className="bg-gray-200">
-                                <th className="border border-gray-300 p-2">Cover</th>
-                                <th className="border border-gray-300 p-2">Title</th>
-                                <th className="border border-gray-300 p-2">Author</th>
-                                <th className="border border-gray-300 p-2">Published</th>
-                                <th className="border border-gray-300 p-2">Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentBooks.map((book) => (
-                                <tr key={book.id} className="text-center">
-                                    <td className="border border-gray-300 p-2">
-                                        {book.bookCover && (
-                                            <img src={book.bookCover} alt={book.title} className="max-w-[100px] max-h-[150px] object-contain" />
-                                        )}
-                                    </td>
-                                    <td className="border border-gray-300 p-2">{book.title}</td>
-                                    <td className="border border-gray-300 p-2">{book.author}</td>
-                                    <td className="border border-gray-300 p-2">{book.publishedDate}</td>
-                                    <td className="border border-gray-300 p-2">
-                                        <Link href={"/book/" + book.id}>
-                                            <button className="bg-blue-500 text-white px-4 py-2 rounded">
-                                                View Details
-                                            </button>
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+    {books.length > 0 ? (
+        <div className="overflow-x-auto bg-white shadow-lg rounded-xl">
+            <table className="min-w-full border-separate border-spacing-0">
+                <thead>
+                    <tr className="bg-gray-100">
+                        <th className="p-4 text-left text-sm font-semibold text-gray-600">Cover</th>
+                        <th className="p-4 text-left text-sm font-semibold text-gray-600">Title</th>
+                        <th className="p-4 text-left text-sm font-semibold text-gray-600">Author</th>
+                        <th className="p-4 text-left text-sm font-semibold text-gray-600">Published</th>
+                        <th className="p-4 text-left text-sm font-semibold text-gray-600">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {currentBooks.map((book) => (
+                        <tr key={book.id} className="border-t transition-transform hover:scale-99 transform duration-200">
+                            <td className="p-4">
+                                {book.bookCover && (
+                                    <img src={book.bookCover} alt={book.title} className="max-w-[80px] max-h-[120px] object-contain mx-auto" />
+                                )}
+                            </td>
+                            <td className="p-4 text-sm text-gray-700">{book.title}</td>
+                            <td className="p-4 text-sm text-gray-700">{book.author}</td>
+                            <td className="p-4 text-sm text-gray-700">{book.publishedDate}</td>
+                            <td className="p-4">
+                                <Link href={"/book/" + book.id}>
+                                    <button className="bg-blue-600 text-white text-sm px-3 py-2 rounded-lg hover:bg-blue-700 focus:outline-none transition duration-200 cursor-pointer">
+                                        View Details
+                                    </button>
+                                </Link>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
 
-                    {/* Paginering */}
-                    <div className="flex justify-center mt-4 space-x-2">
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                            <button
-                                key={page}
-                                onClick={() => setCurrentPage(page)}
-                                className={`px-4 py-2 border ${currentPage === page ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-                            >
-                                {page}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            ) : (
-                <p>No books found.</p>
-            )}
+            {/* Paginering */}
+            <div className="flex justify-center mt-8 space-x-3 pb-5">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 ${currentPage === page ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300 cursor-pointer"}`}
+                    >
+                        {page}
+                    </button>
+                ))}
+            </div>
         </div>
+    ) : (
+        <p className="text-center text-gray-500 mt-4">No books found.</p>
+    )}
+</div>
+
+
     );
 };
 
