@@ -55,12 +55,14 @@ const Navbar = () => {
                     {/* User för inloggade */}
                     {isLoggedIn ? (
                         <div className="flex items-center gap-4 ml-auto">
+                            
                             <Link 
                                 href="/user" 
                                 className={`font-medium ${pathname === "/user" ? "text-yellow-400" : "text-white"} hover:text-yellow-400 transition-colors duration-300`}
                             >
                                 User
                             </Link>
+                            <div className="">Logged in as: {username}</div>
                             <button 
                                 onClick={handleLogout} 
                                 className="bg-red-500 text-white font-medium py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-300 cursor-pointer"
@@ -81,7 +83,7 @@ const Navbar = () => {
                 {/* Hamburgar knapp */}
                 <button
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    className="lg:hidden flex items-center justify-center text-white ml-auto"
+                    className="lg:hidden flex items-center justify-center text-white ml-auto cursor-pointer"
                 >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -99,7 +101,7 @@ const Navbar = () => {
                     {isLoggedIn ? (
                         <>
                             <Link href="/user" className={`font-medium ${pathname === "/user" ? "text-yellow-400" : "text-white"} hover:text-yellow-400 transition-colors duration-300`}>User</Link>
-                            <div className="text-gray-900 mb-2">Logged in as: {username}</div>
+                            <div className="">Logged in as: {username}</div>
                             <button 
                                 onClick={handleLogout} 
                                 className="bg-red-500 text-white font-medium py-2 px-4 rounded-md max-w-40 w-auto hover:bg-red-600 transition-colors duration-300 cursor-pointer"
