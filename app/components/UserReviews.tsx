@@ -61,19 +61,19 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 setError("You need to be logged in to delete a review.");
                 return;
             }
-    
+
             const res = await fetch(`/api/reviews/${deletingReview._id}?userId=${userId}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             if (!res.ok) {
                 const errorData = await res.json();
                 throw new Error(errorData.message || "Failed to delete review");
             }
-    
+
             setReviews(reviews.filter((r) => r._id !== deletingReview._id));
             setDeletingReview(null);
         } catch (error: any) {
@@ -89,7 +89,7 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 setError("You need to be logged in to edit a review.");
                 return;
             }
-    
+
             const res = await fetch(`/api/reviews/${editingReview._id}?userId=${userId}`, {
                 method: "PATCH",
                 headers: {
@@ -98,12 +98,12 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 },
                 body: JSON.stringify({ comment: editedComment, rating: editedRating }),
             });
-    
+
             if (!res.ok) {
                 const errorData = await res.json();
                 throw new Error(errorData.message || "Failed to edit review");
             }
-    
+
             setReviews(reviews.map((r) => (r._id === editingReview._id ? { ...r, comment: editedComment, rating: editedRating } : r)));
             setEditingReview(null);
         } catch (error: any) {
@@ -113,48 +113,48 @@ const UserReviews = ({ userId }: { userId: string }) => {
 
     return (
         <div>
-<h2 className="text-2xl text-center font-semibold text-gray-800 mb-6 mt-5">Your Reviews</h2>
-{error && <p className="text-red-500 text-center mb-4">{error}</p>}
+            <h2 className="text-2xl text-center font-semibold text-gray-800 mb-6 mt-5">Your Reviews</h2>
+            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
-{reviews.length === 0 ? (
-    <p className="text-lg text-gray-500 text-center">You have no reviews yet...</p>
-) : (
-    <ul className="space-y-4">
-        {reviews.map((review) => (
-            <li key={review._id} className="bg-white mx-auto max-w-200 rounded-lg shadow-md p-6 transition-transform hover:scale-102 transform duration-200">
-                <div className="flex items-center justify-between mb-4">
-                    <p className="text-lg font-semibold text-blue-600 cursor-pointer hover:underline" onClick={() => router.push(`/book/${review.bookId}`)}>
-                        {bookTitles[review.bookId] || "Loading book title..."}
-                    </p>
-                    <p className="text-sm text-gray-500">Rating: {"⭐".repeat(review.rating)}</p>
-                </div>
+            {reviews.length === 0 ? (
+                <p className="text-lg text-gray-500 text-center">You have no reviews yet...</p>
+            ) : (
+                <ul className="space-y-4">
+                    {reviews.map((review) => (
+                        <li key={review._id} className="bg-white mx-auto max-w-200 rounded-lg shadow-md p-6 transition-transform hover:scale-102 transform duration-200">
+                            <div className="flex items-center justify-between mb-4">
+                                <p className="text-lg font-semibold text-blue-600 cursor-pointer hover:underline" onClick={() => router.push(`/book/${review.bookId}`)}>
+                                    {bookTitles[review.bookId] || "Loading book title..."}
+                                </p>
+                                <p className="text-sm text-gray-500">Rating: {"⭐".repeat(review.rating)}</p>
+                            </div>
 
-                <p className="text-gray-700 mb-4">{review.comment}</p>
+                            <p className="text-gray-700 mb-4">{review.comment}</p>
 
-                <div className="flex items-center justify-between">
-                    <button
-                        onClick={() => {
-                            setEditingReview(review);
-                            setEditedComment(review.comment);
-                            setEditedRating(review.rating);
-                        }}
-                        className="text-blue-500 hover:text-blue-700 transition-colors duration-200 cursor-pointer"
-                    >
-                        <Pencil className="inline-block mr-2" size={17} />
-                        Edit
-                    </button>
-                    <button
-                        onClick={() => setDeletingReview(review)}
-                        className="text-red-500 hover:text-red-700 transition-colors duration-200 ml-4 cursor-pointer"
-                    >
-                        <Trash2 className="inline-block mr-2" size={17} />
-                        Delete
-                    </button>
-                </div>
-            </li>
-        ))}
-    </ul>
-)}
+                            <div className="flex items-center justify-between">
+                                <button
+                                    onClick={() => {
+                                        setEditingReview(review);
+                                        setEditedComment(review.comment);
+                                        setEditedRating(review.rating);
+                                    }}
+                                    className="text-blue-500 hover:text-blue-700 transition-colors duration-200 cursor-pointer"
+                                >
+                                    <Pencil className="inline-block mr-2" size={17} />
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => setDeletingReview(review)}
+                                    className="text-red-500 hover:text-red-700 transition-colors duration-200 ml-4 cursor-pointer"
+                                >
+                                    <Trash2 className="inline-block mr-2" size={17} />
+                                    Delete
+                                </button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            )}
 
 
             {/* Edit modal */}
@@ -162,17 +162,29 @@ const UserReviews = ({ userId }: { userId: string }) => {
                 <div className="fixed inset-0 bg-gray-100 bg-opacity-50 flex justify-center items-center">
                     <div className="bg-white p-5 rounded-lg shadow-lg w-1/3">
                         <h3 className="text-lg font-bold mb-2">Edit Review</h3>
+                        <label className="block text-sm font-medium text-gray-600 mb-2">New review</label>
                         <textarea
                             value={editedComment}
                             onChange={(e) => setEditedComment(e.target.value)}
                             className="w-full p-2 border rounded"
                         />
-                        <input
-                            type="number"
-                            value={editedRating}
-                            onChange={(e) => setEditedRating(Number(e.target.value))}
-                            className="w-full p-2 border rounded mt-2"
-                        />
+                        <div>
+
+                            {/* Rating dropdown */}
+                            <label className="block text-sm font-medium text-gray-600 mt-4 mb-2">New rating</label>
+                            <select
+                                value={editedRating}
+                                onChange={(e) => setEditedRating(Number(e.target.value))}
+                                className="border border-gray-300 p-3 w-full rounded-md focus:ring-2 focus:ring-blue-500"
+                            >
+                                {[1, 2, 3, 4, 5].map((num) => (
+                                    <option key={num} value={num}>
+                                        {`${"⭐".repeat(num)} ${num}`}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className="mt-4 flex justify-end">
                             <button onClick={handleEdit} className="bg-blue-500 text-white px-4 py-2 rounded mr-2 cursor-pointer hover:bg-blue-600">Save</button>
                             <button onClick={() => setEditingReview(null)} className="bg-gray-300 px-4 py-2 rounded cursor-pointer hover:bg-gray-400">Cancel</button>
