@@ -3,8 +3,7 @@ export default function Home() {
   return (
     <>
       <div className="container mx-auto px-4">
-        <p>Register user below</p>
-        <RegisterForm />
+          <h1>Hello, and welcome to the ....</h1>
       </div>
     </>
   );
