@@ -70,7 +70,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResults }) => {
     <div className="flex gap-3 items-center max-w-200 mx-auto">
         <input
             type="text"
-            className="border border-gray-300 p-3 w-full rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="border border-gray-300 bg-white p-3 w-full rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="Enter book title..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
