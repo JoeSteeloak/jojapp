@@ -91,60 +91,73 @@ const User = () => {
     };
 
     return (
-        <ProtectedRoute>
-            <div className="p-6">
-                <h1 className="text-2xl font-bold">User Profile</h1>
-                {message && <p className="text-red-500">{message}</p>}
-                {user && (
-                    <form onSubmit={handleUpdate} className="space-y-4">
-                        <div>
-                            <label>Name</label>
-                            <input
-                                type="text"
-                                value={updatedName}
-                                onChange={(e) => setUpdatedName(e.target.value)}
-                                className="border p-2 w-full"
-                            />
-                        </div>
-                        <div>
-                            <label>Email</label>
-                            <input
-                                type="email"
-                                value={updatedEmail}
-                                onChange={(e) => setUpdatedEmail(e.target.value)}
-                                className="border p-2 w-full"
-                            />
-                        </div>
-                        <div>
-                            <label>Old Password (required for updates)</label>
-                            <input
-                                type="password"
-                                value={oldPassword}
-                                onChange={(e) => setOldPassword(e.target.value)}
-                                className="border p-2 w-full"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label>New Password (optional)</label>
-                            <input
-                                type="password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                className="border p-2 w-full"
-                            />
-                        </div>
+<ProtectedRoute>
+    <div className="bg-gray-100 min-h-screen py-12"> {/* Grå bakgrund för hela sidan */}
+        <div className="p-6 max-w-xl mx-auto bg-white rounded-lg shadow-md"> {/* Vitt formulär med skugga */}
+            <h1 className="text-2xl font-semibold text-gray-800 mb-8 text-center">User Profile</h1>
+
+            {message && <p className="text-red-500 text-center mb-4">{message}</p>}
+
+            {user && (
+                <form onSubmit={handleUpdate} className="space-y-6">
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-600">Name</label>
+                        <input
+                            type="text"
+                            value={updatedName}
+                            onChange={(e) => setUpdatedName(e.target.value)}
+                            className="border border-gray-300 p-3 w-full rounded-md focus:ring-1 focus:ring-gray-400"
+                        />
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-600">Email</label>
+                        <input
+                            type="email"
+                            value={updatedEmail}
+                            onChange={(e) => setUpdatedEmail(e.target.value)}
+                            className="border border-gray-300 p-3 w-full rounded-md focus:ring-1 focus:ring-gray-400"
+                        />
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-600">Old Password</label>
+                        <input
+                            type="password"
+                            value={oldPassword}
+                            onChange={(e) => setOldPassword(e.target.value)}
+                            className="border border-gray-300 p-3 w-full rounded-md focus:ring-1 focus:ring-gray-400"
+                            required
+                        />
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-600">New Password (optional)</label>
+                        <input
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className="border border-gray-300 p-3 w-full rounded-md focus:ring-1 focus:ring-gray-400"
+                        />
+                    </div>
+
+                    <div className="mt-4 text-center">
                         <button
                             type="submit"
-                            className="bg-blue-600 text-white p-2 rounded"
+                            className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition-colors duration-300 cursor-pointer"
                         >
                             Update Profile
                         </button>
-                    </form>
-                )}
-            </div>
-            {userId && <UserReviews userId={userId} />}
-        </ProtectedRoute>
+                    </div>
+                </form>
+            )}
+        </div>
+        {userId && <UserReviews userId={userId} />}
+    </div>
+</ProtectedRoute>
+
+
+
     );
 };
 

@@ -112,42 +112,47 @@ const UserReviews = ({ userId }: { userId: string }) => {
 
     return (
         <div>
-            <h2 className="text-xl font-bold">Your reviews</h2>
-            {error && <p className="text-red-500">{error}</p>}
-            {reviews.length === 0 ? (
-                <p>You have no reviews yet...</p>
-            ) : (
-                <ul>
-                    {reviews.map((review) => (
-                        <li key={review._id} className="border p-4 my-2">
-                            <p><strong
-                                    className="text-blue-500 cursor-pointer hover:underline"
-                                    onClick={() => router.push(`/book/${review.bookId}`)}
-                                >
-                                    {bookTitles[review.bookId] || "Loading book title..."}
-                                </strong></p>
-                            <p>{review.comment}</p>
-                            <p>Rating: {"⭐".repeat(review.rating)}</p>
-                            <button
-                                onClick={() => {
-                                    setEditingReview(review);
-                                    setEditedComment(review.comment);
-                                    setEditedRating(review.rating);
-                                }}
-                                className="text-blue-500"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => setDeletingReview(review)}
-                                className="text-red-500 ml-4"
-                            >
-                                Delete
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            )}
+<h2 className="text-2xl text-center font-semibold text-gray-800 mb-6 mt-5">Your Reviews</h2>
+{error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
+{reviews.length === 0 ? (
+    <p className="text-lg text-gray-500 text-center">You have no reviews yet...</p>
+) : (
+    <ul className="space-y-4">
+        {reviews.map((review) => (
+            <li key={review._id} className="bg-white mx-auto max-w-200 rounded-lg shadow-md p-6 transition-transform hover:scale-105 transform duration-200">
+                <div className="flex items-center justify-between mb-4">
+                    <p className="text-lg font-semibold text-blue-600 cursor-pointer hover:underline" onClick={() => router.push(`/book/${review.bookId}`)}>
+                        {bookTitles[review.bookId] || "Loading book title..."}
+                    </p>
+                    <p className="text-sm text-gray-500">Rating: {"⭐".repeat(review.rating)}</p>
+                </div>
+
+                <p className="text-gray-700 mb-4">{review.comment}</p>
+
+                <div className="flex items-center justify-between">
+                    <button
+                        onClick={() => {
+                            setEditingReview(review);
+                            setEditedComment(review.comment);
+                            setEditedRating(review.rating);
+                        }}
+                        className="text-blue-500 hover:text-blue-700 transition-colors duration-200 cursor-pointer"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        onClick={() => setDeletingReview(review)}
+                        className="text-red-500 hover:text-red-700 transition-colors duration-200 ml-4 cursor-pointer"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </li>
+        ))}
+    </ul>
+)}
+
 
             {/* Edit modal */}
             {editingReview && (
@@ -166,8 +171,8 @@ const UserReviews = ({ userId }: { userId: string }) => {
                             className="w-full p-2 border rounded mt-2"
                         />
                         <div className="mt-4 flex justify-end">
-                            <button onClick={handleEdit} className="bg-blue-500 text-white px-4 py-2 rounded mr-2">Save</button>
-                            <button onClick={() => setEditingReview(null)} className="bg-gray-300 px-4 py-2 rounded">Cancel</button>
+                            <button onClick={handleEdit} className="bg-blue-500 text-white px-4 py-2 rounded mr-2 cursor-pointer">Save</button>
+                            <button onClick={() => setEditingReview(null)} className="bg-gray-300 px-4 py-2 rounded cursor-pointer">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -179,8 +184,8 @@ const UserReviews = ({ userId }: { userId: string }) => {
                     <div className="bg-white p-5 rounded-lg shadow-lg w-1/3">
                         <h3 className="text-lg font-bold mb-2">Are you sure you want to delete this review?</h3>
                         <div className="mt-4 flex justify-end">
-                            <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded mr-2">Yes, Delete</button>
-                            <button onClick={() => setDeletingReview(null)} className="bg-gray-300 px-4 py-2 rounded">Cancel</button>
+                            <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded mr-2 cursor-pointer">Yes, Delete</button>
+                            <button onClick={() => setDeletingReview(null)} className="bg-gray-300 px-4 py-2 rounded cursor-pointer">Cancel</button>
                         </div>
                     </div>
                 </div>
