@@ -86,7 +86,7 @@ This project is a full-stack application built with **Next.js** that allows user
 1. Clone the repository:
 
    ```
-   git clone <repository-url>
+   git clone https://github.com/JoeSteeloak/jojapp.git
    ```
 
 2. Install dependencies:
