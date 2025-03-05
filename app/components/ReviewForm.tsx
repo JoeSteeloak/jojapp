@@ -45,37 +45,52 @@ const ReviewForm = ({ bookId, onReviewAdded }: { bookId: string; onReviewAdded: 
     };
 
     return (
-        <div className="mt-6">
-            <h2 className="text-lg font-bold">Write a review</h2>
-            {error && <p className="text-red-500">{error}</p>}
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-4">
-                <textarea
-                    className="border p-2"
-                    placeholder="Write a review..."
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    required
-                ></textarea>
+<div className="bg-gray-100 p-6 rounded-lg shadow-md pt-3">
+    <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Add review</h2>
 
-                <label>
-                    Rating:
-                    <select value={rating} onChange={(e) => setRating(Number(e.target.value))} className="border p-2 ml-2">
-                        {[1, 2, 3, 4, 5].map((num) => (
-                            <option key={num} value={num}>
-                                {num}{" "}
-                                {num === 1 && "⭐"}
-                                {num === 2 && "⭐⭐"}
-                                {num === 3 && "⭐⭐⭐"}
-                                {num === 4 && "⭐⭐⭐⭐"}
-                                {num === 5 && "⭐⭐⭐⭐⭐"}
-                            </option>
-                        ))}
-                    </select>
-                </label>
+    {error && <p className="text-red-500 mb-4">{error}</p>}
 
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2">Send review</button>
-            </form>
+    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-10 rounded-xl shadow-sm mx-auto max-w-6xl">
+        <label className="block text-sm font-medium text-gray-600 mb-2">Write a review</label>
+        <textarea
+            className="border border-gray-300 p-4 w-full rounded-md focus:ring-2 focus:ring-blue-500"
+            placeholder="Your review..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            required
+        ></textarea>
+
+        <div>
+            <label className="block text-sm font-medium text-gray-600 mb-2">Rating</label>
+            <select
+                value={rating}
+                onChange={(e) => setRating(Number(e.target.value))}
+                className="border border-gray-300 p-3 w-full rounded-md focus:ring-2 focus:ring-blue-500"
+            >
+                {[1, 2, 3, 4, 5].map((num) => (
+                    <option key={num} value={num}>
+                        {num}{" "}
+                        {num === 1 && "⭐"}
+                        {num === 2 && "⭐⭐"}
+                        {num === 3 && "⭐⭐⭐"}
+                        {num === 4 && "⭐⭐⭐⭐"}
+                        {num === 5 && "⭐⭐⭐⭐⭐"}
+                    </option>
+                ))}
+            </select>
         </div>
+
+        <div className="mt-4 text-center">
+            <button
+                type="submit"
+                className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition-colors duration-300 cursor-pointer"
+            >
+                Send review
+            </button>
+        </div>
+    </form>
+</div>
+
     );
 };
 
