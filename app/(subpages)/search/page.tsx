@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import SearchBar from "@/app/components/SearchBar";
 import { BookInterface } from "@/app/types/BookInterface";
 import Link from "next/link";
+import LatestReviews from "@/app/components/LatestReviews";
 
 const ITEMS_PER_PAGE = 6;
 
 const Search = () => {
     const [books, setBooks] = useState<BookInterface[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
+
 
     // Beräkna vilka böcker som ska visas på den aktuella sidan
     const indexOfLastBook = currentPage * ITEMS_PER_PAGE;
@@ -22,9 +24,13 @@ const Search = () => {
         <div className="bg-gray-100">
             <div className="p-6 rounded-xl mx-auto max-w-6xl">
                 <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Search for Books</h2>
+
                 <SearchBar onResults={setBooks} />
 
-                {books.length > 0 ? (
+                {/* Om böcker är tomma, visa senaste recensioner */}
+                {books.length === 0 ? (
+                    <LatestReviews />
+                ) : (
                     <div className="overflow-x-auto bg-white shadow-xl rounded-xl">
                         <table className="min-w-full border-separate border-spacing-0">
                             <thead>
@@ -72,14 +78,11 @@ const Search = () => {
                             ))}
                         </div>
                     </div>
-                ) : (
-                    <p className="text-center text-gray-500 mt-4">No books found.</p>
                 )}
             </div>
         </div>
-
-
     );
 };
+
 
 export default Search;
