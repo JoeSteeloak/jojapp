@@ -1,4 +1,6 @@
-import RegisterForm from "./components/RegisterForm";
+"use client";
+import LatestReviews from "./components/LatestReviews";
+
 export default function Home() {
   return (
     <>
@@ -14,6 +16,7 @@ export default function Home() {
           <p className="text-lg text-gray-700">
             To get started, create an account or log in to start writing your own reviews!
           </p>
+          <LatestReviews />
         </div>
       </section>
     </>
