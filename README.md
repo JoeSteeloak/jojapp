@@ -58,7 +58,7 @@ This project is a full-stack application built with **Next.js** that allows user
 
 ### Authentication
 
-- **POST /api/login** - Log in and get a JWT token.
+- **POST /api/auth** - Log in and get a JWT token.
 
 ## Frontend Structure
 
