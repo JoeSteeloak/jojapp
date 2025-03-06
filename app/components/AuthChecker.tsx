@@ -34,6 +34,7 @@ const AuthChecker = ({ setIsLoggedIn, setUsername }: AuthCheckerProps) => {
     }, []);
 
     const handleLogout = () => {
+
         localStorage.removeItem("token");
         setIsLoggedIn(false);
         setUsername(null);
@@ -41,6 +42,7 @@ const AuthChecker = ({ setIsLoggedIn, setUsername }: AuthCheckerProps) => {
         if (pathname === "/user") {
             router.push("/login");
         }
+        
     };
 
     return null;
