@@ -94,7 +94,7 @@ const User = () => {
     return (
 <ProtectedRoute>
     <div className="bg-gray-100 min-h-screen py-12"> {/* Grå bakgrund för hela sidan */}
-        <div className="p-6 max-w-6xl mx-auto bg-white rounded-lg shadow-md"> {/* Vitt formulär med skugga */}
+        <div className="p-6 max-w-6xl mx-auto bg-white rounded-lg shadow-md w-9/10"> {/* Vitt formulär med skugga */}
             <h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">User Profile</h1>
 
             {message && <p className="text-red-500 text-center mb-4">{message}</p>}
