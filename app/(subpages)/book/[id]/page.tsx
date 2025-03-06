@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation"; // Importera useParams från Next.js
+import { useParams } from "next/navigation"; 
 import BookDetails from "@/app/components/BookDetails";
 import BookReviews from "@/app/components/BookReviews";
 import ReviewForm from "@/app/components/ReviewForm";
 
 const Page = () => {
-  const params = useParams(); // Hämta params som objekt
-  const id = params.id as string; // Hämta id och tvinga till string
+  const params = useParams(); 
+  const id = params.id as string;
 
   const [reviewsUpdated, setReviewsUpdated] = useState(false);
 

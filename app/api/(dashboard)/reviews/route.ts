@@ -39,8 +39,7 @@ export const GET = async (request: NextRequest) => {
             query.user = new Types.ObjectId(userId);
         }
 
-        // Hämtar recensioner och inkluderar användarnamnet istället för bara userId
-        const reviews = await Review.find(query).populate("user", "username"); 
+        const reviews = await Review.find(query).populate("user", "username");
 
         return new NextResponse(JSON.stringify(reviews), { status: 200 });
 
@@ -56,7 +55,7 @@ export const GET = async (request: NextRequest) => {
 // POST - Create new review
 export const POST = async (request: NextRequest) => {
     try {
-        const { comment, rating, bookId } = await request.json(); // Lägg till bookId
+        const { comment, rating, bookId } = await request.json();
 
         // Kontrollera att bookId finns i requesten
         if (!bookId) {
@@ -77,11 +76,10 @@ export const POST = async (request: NextRequest) => {
 
         await connect();
 
-        // Inkludera bookId i databasen
         const newReview = new Review({
             comment,
             rating,
-            bookId, // Lägg till bookId 
+            bookId,
             user: new Types.ObjectId(decoded.userId),
         });
 

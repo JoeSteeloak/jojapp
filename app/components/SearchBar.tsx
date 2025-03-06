@@ -66,27 +66,27 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResults }) => {
     };
 
     return (
-<div className="mb-6">
-    <div className="flex gap-3 items-center max-w-200 mx-auto">
-        <input
-            type="text"
-            className="border border-gray-300 bg-white p-3 w-full rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            placeholder="Enter book title..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-        />
-        <button
-            className={`bg-blue-600 text-white px-4 min-w-30 py-3 rounded-lg mx-autotransition duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            onClick={handleSearch}
-            disabled={loading}
-        >
-            <Search className="inline-block mr-2" size={18} />
-            {loading ? "Searching..." : "Search"}
-        </button>
-    </div>
-    {error && <p className="text-red-500 mt-3 text-sm">{error}</p>}
-</div>
+        <div className="mb-6">
+            <div className="flex gap-3 items-center max-w-200 mx-auto">
+                <input
+                    type="text"
+                    className="border border-gray-300 bg-white p-3 w-full rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    placeholder="Enter book title..."
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                />
+                <button
+                    className={`bg-blue-600 text-white px-4 min-w-30 py-3 rounded-lg mx-autotransition duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    onClick={handleSearch}
+                    disabled={loading}
+                >
+                    <Search className="inline-block mr-2" size={18} />
+                    {loading ? "Searching..." : "Search"}
+                </button>
+            </div>
+            {error && <p className="text-red-500 mt-3 text-sm">{error}</p>}
+        </div>
 
     );
 };

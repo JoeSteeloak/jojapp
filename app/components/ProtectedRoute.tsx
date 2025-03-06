@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         const token = localStorage.getItem("token");
 
         if (!token) {
-            router.push("/login"); // Skicka till login om ej inloggad
+            router.push("/login"); 
         } else {
             setLoading(false);
         }

@@ -26,7 +26,7 @@ const Navbar = () => {
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.username) {
-                        setUsername(data.username); // Set username from API response
+                        setUsername(data.username);
                     }
                 })
                 .catch((error) => console.error("Failed to fetch user data:", error));
@@ -56,16 +56,16 @@ const Navbar = () => {
                     {/* User för inloggade */}
                     {isLoggedIn ? (
                         <div className="flex items-center gap-4 ml-auto">
-                            
-                            <Link 
-                                href="/user" 
+
+                            <Link
+                                href="/user"
                                 className={`font-medium ${pathname === "/user" ? "text-yellow-400" : "text-white"} hover:text-yellow-400 transition-colors duration-300`}
                             >
                                 User
                             </Link>
                             <div className=""><span className="border-l-4 border-yellow-500 h-full mx-4"></span> Logged in as: {username}</div>
-                            <button 
-                                onClick={handleLogout} 
+                            <button
+                                onClick={handleLogout}
                                 className="bg-red-500 text-white font-medium py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-300 cursor-pointer"
                             >
                                 <LogOut className="inline-block mr-2" size={18} />
@@ -73,8 +73,8 @@ const Navbar = () => {
                             </button>
                         </div>
                     ) : (
-                        <Link 
-                            href="/login" 
+                        <Link
+                            href="/login"
                             className={`font-medium ${pathname === "/login" ? "text-yellow-400" : "text-white"} hover:text-yellow-400 transition-colors duration-300`}
                         >
                             Login
@@ -104,8 +104,8 @@ const Navbar = () => {
                         <>
                             <Link href="/user" className={`font-medium ${pathname === "/user" ? "text-yellow-400" : "text-white"} hover:text-yellow-400 transition-colors duration-300`}>User</Link>
                             <div className="">Logged in as: {username}</div>
-                            <button 
-                                onClick={handleLogout} 
+                            <button
+                                onClick={handleLogout}
                                 className="bg-red-500 text-white font-medium py-2 px-4 rounded-md max-w-40 w-auto hover:bg-red-600 transition-colors duration-300 cursor-pointer"
                             >
                                 <LogOut className="inline-block mr-2" size={18} />
@@ -113,8 +113,8 @@ const Navbar = () => {
                             </button>
                         </>
                     ) : (
-                        <Link 
-                            href="/login" 
+                        <Link
+                            href="/login"
                             className={`font-medium ${pathname === "/login" ? "text-yellow-400" : "text-white"} hover:text-yellow-400 transition-colors duration-300 cursor-pointer`}
                         >
                             Login

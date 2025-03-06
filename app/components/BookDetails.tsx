@@ -62,7 +62,6 @@ const BookDetails = ({ bookId }: { bookId: string }) => {
                 </div>
             </div>
         </div>
-
     );
 };
 

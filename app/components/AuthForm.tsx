@@ -12,7 +12,7 @@ const AuthForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
-        
+
         const url = isLogin ? "/api/auth" : "/api/users"; // Anpassa beroende på login eller register
         const body = isLogin ? { email, password } : { username, email, password };
 
@@ -32,10 +32,10 @@ const AuthForm = () => {
             if (isLogin) {
                 const data = await res.json();
                 localStorage.setItem("token", data.token);
-                window.location.href = "/user"; 
+                window.location.href = "/user";
             } else {
                 alert("Account created successfully! You can now log in.");
-                setIsLogin(true); 
+                setIsLogin(true);
             }
         } catch (err: any) {
             setError(err.message);
