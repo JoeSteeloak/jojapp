@@ -52,12 +52,12 @@ const LatestReviews = () => {
     };
 
     return (
-        <div className="p-6 bg-white rounded-lg shadow-md max-w-4xl mx-auto">
-            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Latest Reviews</h2>
+        <div className="p-4 max-w-2xl mx-auto mt-10">
+            <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Our users latest reviews</h2>
             {reviews.length > 0 ? (
-                <ul className="space-y-6">
+                <ul className="space-y-3">
                     {reviews.map((review) => (
-                        <li key={review._id} className="p-4 border-b border-gray-200 rounded-lg hover:bg-gray-50 transition duration-300 ease-in-out">
+                        <li key={review._id} className="p-2 border-b border-gray-200 rounded-lg shadow-md bg-white hover:bg-blue-200 transition duration-300 ease-in-out">
                             
                             <p 
                                 className="text-lg font-semibold text-blue-600 cursor-pointer hover:underline"
