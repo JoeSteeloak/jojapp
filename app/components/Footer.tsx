@@ -6,17 +6,17 @@ const Footer = () => {
                 <nav className="mt-4">
                     <ul className="flex justify-center space-x-6">
                         <li>
-                            <a href="/about" className="hover:text-white transition-colors">
+                            <a href="#" className="hover:text-white transition-colors">
                                 About
                             </a>
                         </li>
                         <li>
-                            <a href="/contact" className="hover:text-white transition-colors">
+                            <a href="#" className="hover:text-white transition-colors">
                                 Contact
                             </a>
                         </li>
                         <li>
-                            <a href="/privacy" className="hover:text-white transition-colors">
+                            <a href="#" className="hover:text-white transition-colors">
                                 Privacy Policy
                             </a>
                         </li>
