@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
+import AuthChecker from "./AuthChecker";
 
 const Navbar = () => {
     const pathname = usePathname();
@@ -122,6 +123,7 @@ const Navbar = () => {
                     )}
                 </div>
             </div>
+            <AuthChecker setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} />
         </nav>
     );
 };
