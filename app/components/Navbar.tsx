@@ -123,6 +123,7 @@ const Navbar = () => {
                     )}
                 </div>
             </div>
+            {/* Importerad komponent som kontrollera om JWT-toke har expired */}
             <AuthChecker setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} />
         </nav>
     );

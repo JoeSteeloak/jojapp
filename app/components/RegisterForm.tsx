@@ -1,3 +1,4 @@
+// Formulärkomponent för att registrera nya användare
 "use client";
 
 import React, { useState } from "react";

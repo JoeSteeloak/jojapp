@@ -1,3 +1,4 @@
+// Komponent för att skydda routes om token saknas
 "use client";
 
 import { useEffect, useState } from "react";

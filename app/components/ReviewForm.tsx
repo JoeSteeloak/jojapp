@@ -1,3 +1,4 @@
+// Komponentformulär för att skapa en ny recension
 "use client";
 
 import { useState } from "react";

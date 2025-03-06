@@ -16,6 +16,7 @@ export default function Home() {
           <p className="text-lg text-gray-700">
             To get started, create an account or log in to start writing your own reviews!
           </p>
+          {/* Importerad komponent för att visa de senaste recensionerna */}
           <LatestReviews />
         </div>
       </section>

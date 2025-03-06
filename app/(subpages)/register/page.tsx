@@ -1,3 +1,5 @@
+// sida för registrering av användare
+
 import RegisterForm from '@/app/components/RegisterForm'
 import React from 'react'
 

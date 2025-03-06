@@ -1,3 +1,4 @@
+// komponent som visar detaljer om enskilda böcker
 "use client";
 
 import React, { useEffect, useState } from "react";

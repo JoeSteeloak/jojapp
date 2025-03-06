@@ -1,3 +1,4 @@
+// komponent som visar alla recensioner för enskild bok 
 "use client";
 
 import { useState, useEffect } from "react";

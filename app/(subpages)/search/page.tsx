@@ -1,3 +1,5 @@
+// Sida för sökning av böcker
+
 "use client";
 
 import React, { useState } from "react";
@@ -7,6 +9,7 @@ import Link from "next/link";
 
 const ITEMS_PER_PAGE = 6;
 
+// Funktion för att hämta och visa böcker
 const Search = () => {
     const [books, setBooks] = useState<BookInterface[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -22,6 +25,7 @@ const Search = () => {
         <div className="bg-gray-100 min-h-screen">
             <div className="p-6 rounded-xl mx-auto max-w-6xl">
                 <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Search for Books</h2>
+                {/* Komponent som sköter anrop för sökning av böcker */}
                 <SearchBar onResults={setBooks} />
 
                 {books.length > 0 ? (

@@ -1,3 +1,5 @@
+// sida för att uppdatera användare och deras kommentarer
+
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -154,6 +156,7 @@ const User = () => {
                         </form>
                     )}
                 </div>
+                {/* Komponent som hämtar användarens alla recensioner */}
                 {userId && <UserReviews userId={userId} />}
             </div>
         </ProtectedRoute>

@@ -23,7 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onResults }) => {
             onResults(JSON.parse(savedResults)); // Återställ tidigare sökresultat
         }
     }, []);
-
+    // Funktion för att söka efter böcker
     const handleSearch = async () => {
         if (!query.trim()) return;
 

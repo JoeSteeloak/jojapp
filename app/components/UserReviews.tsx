@@ -1,3 +1,4 @@
+// Komponent för att ladda in den aktiva användarns recensioner
 "use client";
 
 import { useState, useEffect } from "react";

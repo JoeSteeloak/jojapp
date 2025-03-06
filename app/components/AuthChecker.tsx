@@ -1,3 +1,5 @@
+// Komponent som loggar ut användaren när JWT är expired
+
 "use client";
 
 import { useEffect } from "react";

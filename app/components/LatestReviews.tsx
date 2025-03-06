@@ -1,3 +1,4 @@
+// Komponent för att visa de senaste recensionerna, gjored för startsidan
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
