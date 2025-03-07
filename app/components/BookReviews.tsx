@@ -2,18 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
-interface Review {
-    _id: string;
-    comment: string;
-    rating: number;
-    bookId: string;
-    user: { username: string } | null;
-    createdAt: string;
-}
+import { ReviewInterface } from "@/app/types/ReviewInterface";
 
 const BookReviews = ({ bookId, reviewsUpdated }: { bookId: string; reviewsUpdated: boolean }) => {
-    const [reviews, setReviews] = useState<Review[]>([]);
+    const [reviews, setReviews] = useState<ReviewInterface[]>([]);
 
     const fetchReviews = async () => {
         try {

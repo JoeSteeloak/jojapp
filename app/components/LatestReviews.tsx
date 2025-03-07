@@ -1,30 +1,22 @@
 // Komponent för att visa de senaste recensionerna, gjored för startsidan
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
-interface Review {
-    _id: string;
-    comment: string;
-    rating: number;
-    createdAt: string; // Timestamp
-    bookId: string; // Lägg till bookId
-    user?: { username: string }; // Användare som gjort review
-}
+import { ReviewInterface } from "@/app/types/ReviewInterface";
 
 const LatestReviews = () => {
-    const [reviews, setReviews] = useState<Review[]>([]);
+    const [reviews, setReviews] = useState<ReviewInterface[]>([]);
     const [bookTitles, setBookTitles] = useState<{ [key: string]: string }>({});
     const router = useRouter();
 
     useEffect(() => {
         fetch("/api/reviews")
             .then((res) => res.json())
-            .then((data: Review[]) => {
+            .then((data: ReviewInterface[]) => {
                 // Hämta boktitlar
                 const fetchTitles = async () => {
                     const titles: { [key: string]: string } = {};
                     await Promise.all(
-                        data.map(async (review: Review) => {
+                        data.map(async (review: ReviewInterface) => {
                             const bookRes = await fetch(`https://www.googleapis.com/books/v1/volumes/${review.bookId}`);
                             if (bookRes.ok) {
                                 const bookData = await bookRes.json();

@@ -4,19 +4,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2 } from "lucide-react";
-
-interface Review {
-    _id: string;
-    comment: string;
-    rating: number;
-    bookId: string;
-}
+import { ReviewInterface } from "../types/ReviewInterface";
 
 const UserReviews = ({ userId }: { userId: string }) => {
-    const [reviews, setReviews] = useState<Review[]>([]);
+    const [reviews, setReviews] = useState<ReviewInterface[]>([]);
     const [error, setError] = useState<string | null>(null);
-    const [editingReview, setEditingReview] = useState<Review | null>(null);
-    const [deletingReview, setDeletingReview] = useState<Review | null>(null);
+    const [editingReview, setEditingReview] = useState<ReviewInterface | null>(null);
+    const [deletingReview, setDeletingReview] = useState<ReviewInterface | null>(null);
     const [bookTitles, setBookTitles] = useState<{ [key: string]: string }>({});
     const [editedComment, setEditedComment] = useState<string>("");
     const [editedRating, setEditedRating] = useState<number>(0);
@@ -32,7 +26,7 @@ const UserReviews = ({ userId }: { userId: string }) => {
             // Hämta boktitlar
             const titles: { [key: string]: string } = {};
             await Promise.all(
-                data.map(async (review: Review) => {
+                data.map(async (review: ReviewInterface) => {
                     const bookRes = await fetch(`https://www.googleapis.com/books/v1/volumes/${review.bookId}`);
                     if (bookRes.ok) {
                         const bookData = await bookRes.json();
