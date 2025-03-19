@@ -15,7 +15,7 @@ const ReviewForm = ({ bookId, onReviewAdded }: { bookId: string; onReviewAdded: 
         try {
             const token = localStorage.getItem("token"); // Hämta JWT-token från localStorage
             if (!token) {
-                setError("Du måste vara inloggad för att skriva en recension.");
+                setError("You need to be logged in to write a review.");
                 return;
             }
 
@@ -30,7 +30,7 @@ const ReviewForm = ({ bookId, onReviewAdded }: { bookId: string; onReviewAdded: 
 
             if (!res.ok) {
                 const errorData = await res.json();
-                throw new Error(errorData.message || "Något gick fel.");
+                throw new Error(errorData.message || "Something went wrong.");
             }
 
             // Rensa formuläret
