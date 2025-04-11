@@ -12,6 +12,12 @@ const ReviewForm = ({ bookId, onReviewAdded }: { bookId: string; onReviewAdded: 
         e.preventDefault();
         setError(null);
 
+        // NY KOD TILL KOMPLETERING Kontrollera så att review inte är tom
+        if (!comment.trim()) {
+            setError("Review cannot be empty.");
+            return;
+        }
+
         try {
             const token = localStorage.getItem("token"); // Hämta JWT-token från localStorage
             if (!token) {
